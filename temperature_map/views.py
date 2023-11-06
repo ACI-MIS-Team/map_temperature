@@ -3,10 +3,9 @@ from django.http import request
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 
-from temperature_map.models import WeatherData, WeatherDataNew
-from temperature_map.serializer import WeatherDataNewSerializer, WeatherDataSerializer
+from temperature_map.models import WeatherData, WeatherDataNew, WeatherDataPrediction
+from temperature_map.serializer import WeatherDataNewSerializer, WeatherDataPredictionSerializer, WeatherDataSerializer
 
 
 class WeatherDataList(APIView):
@@ -39,15 +38,86 @@ class WeatherDataList(APIView):
         return Response(serializer.data)
 
 
-class WeatherDataNewList(APIView):
+class WeatherDataPredictionAverage(APIView):
     # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         year = self.request.query_params.get("year", None)
         month = self.request.query_params.get("month", None)
-        station = self.request.query_params.get("station_name", None)
+        station = self.request.query_params.get("station", None)
         data_type = self.request.query_params.get("data_type", None)
         day = self.request.query_params.get("day", None)
+        source = self.request.query_params.get("source", None)
+
+        weather_data = WeatherDataPrediction.objects.all()
+        if year:
+            weather_data = weather_data.filter(c_year=year)
+
+        if month:
+            weather_data = weather_data.filter(c_month=month)
+
+        if day:
+            weather_data = weather_data.filter(c_day=day)
+
+        if station:
+            weather_data = weather_data.filter(station=station)
+
+        if data_type:
+            weather_data = weather_data.filter(data_type=data_type)
+        
+        if source:
+            weather_data = weather_data.filter(source=source)
+
+        # weather_data = WeatherDataNew.objects.filter(c_month=month, c_year=year)
+        serializer = WeatherDataPredictionSerializer(weather_data, many=True)
+        return Response(serializer.data)
+
+
+class WeatherDataPredictionDetails(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        year = self.request.query_params.get("year", None)
+        month = self.request.query_params.get("month", None)
+        station = self.request.query_params.get("station", None)
+        data_type = self.request.query_params.get("data_type", None)
+        day = self.request.query_params.get("day", None)
+        source = self.request.query_params.get("source", None)
+
+        weather_data = WeatherDataPrediction.objects.all()
+        if year:
+            weather_data = weather_data.filter(c_year=year)
+
+        if month:
+            weather_data = weather_data.filter(c_month=month)
+
+        if day:
+            weather_data = weather_data.filter(c_day=day)
+
+        if station:
+            weather_data = weather_data.filter(station=station)
+
+        if data_type:
+            weather_data = weather_data.filter(data_type=data_type)
+        
+        if source:
+            weather_data = weather_data.filter(source=source)
+
+        # weather_data = WeatherDataNew.objects.filter(c_month=month, c_year=year)
+        serializer = WeatherDataPredictionSerializer(weather_data, many=True)
+        return Response(serializer.data)
+
+
+class WeatherDataHistoricalDetails(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        year = self.request.query_params.get("year", None)
+        month = self.request.query_params.get("month", None)
+        station = self.request.query_params.get("station", None)
+        data_type = self.request.query_params.get("data_type", None)
+        day = self.request.query_params.get("day", None)
+        source = self.request.query_params.get("source", None)
 
         weather_data = WeatherDataNew.objects.all()
         if year:
@@ -64,7 +134,9 @@ class WeatherDataNewList(APIView):
 
         if data_type:
             weather_data = weather_data.filter(data_type=data_type)
+        
+        if source:
+            weather_data = weather_data.filter(source=source)
 
-        # weather_data = WeatherDataNew.objects.filter(c_month=month, c_year=year)
         serializer = WeatherDataNewSerializer(weather_data, many=True)
         return Response(serializer.data)
