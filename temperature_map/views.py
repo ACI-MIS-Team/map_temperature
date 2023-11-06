@@ -7,6 +7,13 @@ from rest_framework.response import Response
 from temperature_map.models import WeatherData, WeatherDataNew, WeatherDataPrediction
 from temperature_map.serializer import WeatherDataNewSerializer, WeatherDataPredictionSerializer, WeatherDataSerializer
 
+from django.views import View
+
+
+class MapView(View):
+    def get(self, request):
+        return render(request, "map_temperature.html")
+
 
 class WeatherDataList(APIView):
     # permission_classes = [IsAuthenticated]
