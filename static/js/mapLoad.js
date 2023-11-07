@@ -8,117 +8,231 @@ var map = new mapboxgl.Map({
   container: "map", // container ID
   style: ENGLISH_STYLE, // style URL
   center: [90.3510153, 23.7645784], // starting position [lng, lat]
-  zoom: 4, // starting zoom
+  zoom: 7, // starting zoom
   attributionControl: false,
 });
+// Define some sample point coordinates with popup content
+var points = [
+  {
+    type: "Feature",
+    properties: {
+      title: "Dinajpur",
+      description: "Dinajpur Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [88.6346, 25.629], // Dinajpur
+    },
+  },
+  {
+    type: "Feature",
+    properties: {
+      title: "Rangpur",
+      description: "Rangpur Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [89.2752, 25.7439], // Rangpur
+    },
+  },
+  {
+    type: "Feature",
+    properties: {
+      title: "Bogra",
+      description: "Bogra Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [89.378, 24.8485], // Bogra
+    },
+  },
+  {
+    type: "Feature",
+    properties: {
+      title: "Mymensingh",
+      description: "Mymensingh Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [90.4075, 24.7465], // Mymensingh
+    },
+  },
+  {
+    type: "Feature",
+    properties: {
+      title: "Sylhet",
+      description: "Sylhet Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [91.8725, 24.8949], // Sylhet
+    },
+  },
+  {
+    type: "Feature",
+    properties: {
+      title: "Srimongal",
+      description: "Srimongal Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [91.7296, 24.3144], // Srimongal
+    },
+  },
+  {
+    type: "Feature",
+    properties: {
+      title: "Ishurdi",
+      description: "Ishurdi Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [89.9845, 24.1495], // Ishurdi
+    },
+  },
+  {
+    type: "Feature",
+    properties: {
+      title: "Dhaka",
+      description: "Dhaka Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [90.4125, 23.8103], // Dhaka
+    },
+  },
+  {
+    type: "Feature",
+    properties: {
+      title: "Faridpur",
+      description: "Faridpur Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [89.8394, 23.6061], // Faridpur
+    },
+  },
+  {
+    type: "Feature",
+    properties: {
+      title: "Comilla",
+      description: "Comilla Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [91.1782, 23.4682], // Comilla
+    },
+  },
+  {
+    type: "Feature",
+    properties: {
+      title: "Jessore",
+      description: "Jessore Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [89.2107, 23.1695], // Jessore
+    },
+  },
+  {
+    type: "Feature",
+    properties: {
+      title: "Khulna",
+      description: "Khulna Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [89.5687, 22.8158], // Khulna
+    },
+  },
+  {
+    type: "Feature",
+    properties: {
+      title: "Mymensingh",
+      description: "Mymensingh Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [90.4075, 24.7465], // Mymensingh
+    },
+  },
+  {
+    type: "Feature",
+    properties: {
+      title: "Rangamati",
+      description: "Rangamati Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [92.1902, 22.6284], // Rangamati
+    },
+  },
+  {
+    type: "Feature",
+    properties: {
+      title: "Chittagong",
+      description: "Chittagong Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [91.8, 22.3667], // Chittagong
+    },
+  },
+  {
+    type: "Feature",
+    properties: {
+      title: "Cox's Bazar",
+      description: "Cox's Bazar Weather Station",
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [92.0058, 21.4272], // Cox's Bazar
+    },
+  },
+];
 
-map.on("load", () => {
-  // Add a new source from our GeoJSON data and
-  // set the 'cluster' option to true. GL-JS will
-  // add the point_count property to your source data.
-  map.addSource("earthquakes", {
+// Add a source for your points
+map.on("load", function () {
+  map.addSource("points", {
     type: "geojson",
-    // Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
-    // from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
-    data: "https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson",
-    cluster: true,
-    clusterMaxZoom: 14, // Max zoom to cluster points on
-    clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
+    data: {
+      type: "FeatureCollection",
+      features: points,
+    },
   });
 
   map.addLayer({
-    id: "clusters",
+    id: "points",
     type: "circle",
-    source: "earthquakes",
-    filter: ["has", "point_count"],
+    source: "points",
     paint: {
-      // Use step expressions (https://docs.mapbox.com/style-spec/reference/expressions/#step)
-      // with three steps to implement three types of circles:
-      //   * Blue, 20px circles when point count is less than 100
-      //   * Yellow, 30px circles when point count is between 100 and 750
-      //   * Pink, 40px circles when point count is greater than or equal to 750
-      "circle-color": [
-        "step",
-        ["get", "point_count"],
-        "#51bbd6",
-        100,
-        "#f1f075",
-        750,
-        "#f28cb1",
-      ],
-      "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+      "circle-radius": 10, // Increase the circle size
+      "circle-color": "#FF5733", // Customize the color (e.g., orange)
+      "circle-opacity": 0.7, // Adjust the opacity
+      "circle-stroke-width": 2, // Add a border
+      "circle-stroke-color": "#FF5733", // Border color matching the circle color
     },
   });
-
-  map.addLayer({
-    id: "cluster-count",
-    type: "symbol",
-    source: "earthquakes",
-    filter: ["has", "point_count"],
-    layout: {
-      "text-field": ["get", "point_count_abbreviated"],
-      "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-      "text-size": 12,
-    },
+  // Add a hover popup
+  var popup = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnClick: false,
   });
 
-  map.addLayer({
-    id: "unclustered-point",
-    type: "circle",
-    source: "earthquakes",
-    filter: ["!", ["has", "point_count"]],
-    paint: {
-      "circle-color": "#11b4da",
-      "circle-radius": 4,
-      "circle-stroke-width": 1,
-      "circle-stroke-color": "#fff",
-    },
-  });
+  map.on("mouseenter", "points", function (e) {
+    map.getCanvas().style.cursor = "pointer";
+    var coordinates = e.features[0].geometry.coordinates.slice();
+    var title = e.features[0].properties.title;
+    var description = e.features[0].properties.description;
 
-  // inspect a cluster on click
-  map.on("click", "clusters", (e) => {
-    const features = map.queryRenderedFeatures(e.point, {
-      layers: ["clusters"],
-    });
-    const clusterId = features[0].properties.cluster_id;
-    map
-      .getSource("earthquakes")
-      .getClusterExpansionZoom(clusterId, (err, zoom) => {
-        if (err) return;
-
-        map.easeTo({
-          center: features[0].geometry.coordinates,
-          zoom: zoom,
-        });
-      });
-  });
-
-  // When a click event occurs on a feature in
-  // the unclustered-point layer, open a popup at
-  // the location of the feature, with
-  // description HTML from its properties.
-  map.on("click", "unclustered-point", (e) => {
-    const coordinates = e.features[0].geometry.coordinates.slice();
-    const mag = e.features[0].properties.mag;
-    const tsunami = e.features[0].properties.tsunami === 1 ? "yes" : "no";
-
-    // Ensure that if the map is zoomed out such that
-    // multiple copies of the feature are visible, the
-    // popup appears over the copy being pointed to.
-    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-      coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-    }
-
-    new mapboxgl.Popup()
+    popup
       .setLngLat(coordinates)
-      .setHTML(`magnitude: ${mag}<br>Was there a tsunami?: ${tsunami}`)
+      .setHTML("<h3>" + title + "</h3><p>" + description + "</p>")
       .addTo(map);
   });
 
-  map.on("mouseenter", "clusters", () => {
-    map.getCanvas().style.cursor = "pointer";
-  });
-  map.on("mouseleave", "clusters", () => {
+  map.on("mouseleave", "points", function () {
     map.getCanvas().style.cursor = "";
+    popup.remove();
   });
 });

@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  map-temperature-web:
+    build:
+      context: .
+    container_name: 'map-temperature-container'
+    ports:
+      - "8085:8085"
+    volumes:
+      - .:/app
+    command: >
+      sh -c "python manage.py makemigrations && python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8085"
+
