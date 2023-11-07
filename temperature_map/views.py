@@ -12,7 +12,28 @@ from django.views import View
 
 class MapView(View):
     def get(self, request):
-        return render(request, "map_temperature.html")
+        year = None
+        month = 2
+        day = 3
+        station_name = "Dhaka"
+        data_type = None
+        weather_data = WeatherData.objects.all()
+        if year:
+            weather_data = weather_data.filter(c_year=year)
+
+        if month:
+            weather_data = weather_data.filter(c_month=month)
+
+        if day:
+            weather_data = weather_data.filter(c_day=day)
+
+        if station_name:
+            weather_data = weather_data.filter(station_name=station_name)
+
+        if data_type:
+            weather_data = weather_data.filter(data_type=data_type)
+        context = {"weather_data": weather_data}
+        return render(request, "map_temperature.html", context)
 
 
 class WeatherDataList(APIView):
@@ -40,7 +61,7 @@ class WeatherDataList(APIView):
 
         if data_type:
             weather_data = weather_data.filter(data_type=data_type)
-
+        print(weather_data)
         serializer = WeatherDataSerializer(weather_data, many=True)
         return Response(serializer.data)
 
