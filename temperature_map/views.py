@@ -342,8 +342,8 @@ class WeatherDataPredictionDetails(APIView):
 
             if data_type == "temperature":
                 result[date]["temperature"] = value
-                # if value < 25:
-                #     result[date]["rainy"] = True
+                if value < 25:
+                    result[date]["rainy"] = True
             elif data_type == "humidity":
                 result[date]["humidity"] = value
             elif data_type == "rainy":
