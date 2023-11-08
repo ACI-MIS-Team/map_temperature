@@ -294,9 +294,9 @@
     };
 
     function updateWeatherPlot() {
-        console.log("http://localhost:8085/weather_data_prediction_graph/?station=Dhaka&month=12&year=2023");
+        console.log("http://192.168.100.113:8085/weather_data_prediction_graph/?station=Dhaka&month=12&year=2023");
         $.ajax({
-          url: "http://localhost:8085/weather_data_prediction_graph/?station=Dhaka&month=12&year=2023", // Replace with the actual API endpoint URL
+          url: "http://192.168.100.113:8085/weather_data_prediction_graph/?station=Dhaka&month=12&year=2023", // Replace with the actual API endpoint URL
           method: "GET",
           success: function (data) {
             console.log(data.weather_plot_html);
@@ -315,7 +315,7 @@
 
         console.log(avg_temp);
 
-        fetch(`http://localhost:8085/weather_data_prediction_details/?year=${year}&month=${month}&station=${station}`, {
+        fetch(`http://192.168.100.113:8085/weather_data_prediction_details/?year=${year}&month=${month}&station=${station}`, {
             method: 'GET', // or 'POST' if your API requires it
             headers: {
                 'Content-Type': 'application/json',
