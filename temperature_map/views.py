@@ -111,10 +111,14 @@ class MapView(View):
                             "month": month,
                             "temperature_avg_value": result_dict[station][year][month][
                                 "temperature"
-                            ]["avg_value"],
+                            ]["avg_value"]
+                            if "temperature" in result_dict[station][year][month]
+                            else 0,
                             "humidity_avg_value": result_dict[station][year][month][
                                 "humidity"
-                            ]["avg_value"],
+                            ]["avg_value"]
+                            if "humidity" in result_dict[station][year][month]
+                            else 0,
                         }
                     )
 
@@ -275,10 +279,14 @@ class WeatherDataPredictionAverage(APIView):
                             "month": month,
                             "temperature_avg_value": result_dict[station][year][month][
                                 "temperature"
-                            ]["avg_value"],
+                            ]["avg_value"]
+                            if "temperature" in result_dict[station][year][month]
+                            else 0,
                             "humidity_avg_value": result_dict[station][year][month][
                                 "humidity"
-                            ]["avg_value"],
+                            ]["avg_value"]
+                            if "humidity" in result_dict[station][year][month]
+                            else 0,
                         }
                     )
 
@@ -334,10 +342,12 @@ class WeatherDataPredictionDetails(APIView):
 
             if data_type == "temperature":
                 result[date]["temperature"] = value
-                if value < 25:
-                    result[date]["rainy"] = True
+                # if value < 25:
+                #     result[date]["rainy"] = True
             elif data_type == "humidity":
                 result[date]["humidity"] = value
+            elif data_type == "rainy":
+                result[date]["rainy"] = value
 
         list_result = []
         for ele in result:
