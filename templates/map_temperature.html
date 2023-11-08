@@ -23,6 +23,7 @@
         body {
             margin: 0;
             padding: 0;
+            height: 200px;
         }
 
         #map {
@@ -51,19 +52,72 @@
 
         /* Style for the smaller table */
         .smaller-table {
-            font-size: 12px; /* Adjust the font size as needed */
+            font-size: 11px; /* Adjust the font size as needed */
+        }
+
+        .cell-group {
+            display: flex; /* Use flexbox to control the layout */
+            justify-content: space-between; /* Separate the values within the cell */
+            align-content: center;
+            padding: 5px; /* Adjust padding as needed */
+            border: 1px solid #000; /* Add border styles as desired */
         }
 
         .smaller-table th,
         .smaller-table td {
-            padding: 5px; /* Adjust the padding as needed */
+            padding: 0; /* Adjust the padding as needed */
         }
+
         .value1, .value2, .total-value1, .total-value2 {
             font-size: 14px;
         }
 
         .total-cell .value1, .total-cell .value2 {
             color: red;
+        }
+
+        .calendar {
+            width: 300px;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+
+        .calendar th {
+            background-color: #333;
+            color: #fff;
+            font-weight: bold;
+        }
+        .cell {
+            padding: 5px;
+            cursor: pointer;
+        }
+        .selected {
+                background-color: red; /* Change to your desired clicked background color */
+            }
+        .cell:hover {
+            background-color: red; /* Change to your desired hover background color */
+            cursor: pointer; /* Change to a pointer cursor to indicate it's clickable */
+        }
+        .calendar th, .calendar td {
+            border: 1px solid #ccc;
+            padding: 4px;
+        }
+
+        .calendar td {
+            height: 50px;
+            font-size: 10px;
+            font-weight: bold;
+            vertical-align: top;
+            cursor: pointer;
+        }
+
+        .temperature {
+            font-size: 9px;
+            color: #e44d26;
+        }
+
+        .date {
+            font-weight: bold;
         }
     </style>
 
@@ -107,85 +161,448 @@
 <body>
 <div class="container-fluid p-0">
     <div class="row m-0">
-        <div class="col-6 bg-white p-0" style="width: 50vw; height: 100vh">
+        <div class="col-7 bg-white p-0" style="width: 50vw">
             <div class="container mt-8">
-                <h4>Prediction Table</h4>
-                <div class="form-group form-inline">
-                    <form>
-                        <div class="form-group">
-                            <input type="number" class="form-control" id="numColumns" min="4" max="12" value="4">
-                        </div>
-                    </form>
-                    <button class="btn btn-primary" style="margin-left: 20px" id="createTable">Show</button>
-                </div>
+                <!--                <br>-->
+                <!--                <h6>Prediction Table</h6>-->
+                <!--                <div class="form-group form-inline">-->
+                <!--                    <form>-->
+                <!--                        <div class="form-group">-->
+                <!--                            <input type="number" class="form-control" id="numColumns" min="4" max="12" value="4">-->
+                <!--                        </div>-->
+                <!--                    </form>-->
+                <!--                    <button class="btn btn-primary" style="margin-left: 20px" id="createTable">Show</button>-->
+                <!--                </div>-->
                 <div id="tableContainer" class="mt-4">
-    <div class="table-scroll-container">
-        <table class="table table-bordered custom-table smaller-table">
-            <thead>
-                <tr>
-                    <th>Station</th>
-                    <!-- Your table headers here ... -->
-                    <th class="total-header">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <div class="value1">Value 1</div>
-                        <div class="value2">Value 2</div>
-                    </td>
-                    <!-- Your table cells here ... -->
-                    <td class="total-cell">
-                        <div class="total-value1">Total 1</div>
-                        <div class="total-value2">Total 2</div>
-                    </td>
-                </tr>
-                <!-- Additional table rows ... -->
-            </tbody>
-        </table>
-    </div>
-</div>
+                    <div class="table-scroll-container" style="height: 400px;">
+                        <table class="table table-bordered custom-table smaller-table">
+                            <thead>
+                            <tr>
+                                <th>Station</th>
+                                {% for month in months %}
+                                <th>{{month}}</th>
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for station, station_data in results.items %}
+                            <tr>
+                                <td>{{ station }}</td>
+                                {% for data in station_data %}
+                                <td class="cell" onclick="generateCalendar('{{ data.year}}', '{{ data.month }}'); generateCalendar2('{{ data.year}}', '{{ data.month }}');  toggleBackgroundColor(this)">
+                                    <div class="cell-group" style="background-color: yellow">{{ data.temperature_avg_value | floatformat:1 }}
+                                    </div>
+                                    <div class="cell-group" style="background-color: orange">{{ data.humidity_avg_value | floatformat:1 }}
+                                    </div>
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+               <div class="col-12" style="margin-top: 20px">
+                    <div class="row justify-content-between">
+                        <div class="col-6">
+                            <p style="text-align: center; font-weight: bold; color: green">Table 1: Prediction Data</p>
+                        </div>
+                        <div class="col-6">
+                            <p style="text-align: center; font-weight: bold; color: red">Table 2: Historical Data</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-12">
+                    <div class="row">
+                        <table class="calendar col-5">
+                                    <thead>
+                                    <tr>
+                                        <th>Sun</th>
+                                        <th>Mon</th>
+                                        <th>Tue</th>
+                                        <th>Wed</th>
+                                        <th>Thu</th>
+                                        <th>Fri</th>
+                                        <th>Sat</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="calendar-body">
+                                    </tbody>
+                                </table>
+
+                        <table class="calendar col-5">
+                                    <thead>
+                                    <tr>
+                                        <th>Sun</th>
+                                        <th>Mon</th>
+                                        <th>Tue</th>
+                                        <th>Wed</th>
+                                        <th>Thu</th>
+                                        <th>Fri</th>
+                                        <th>Sat</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="calendar-body2">
+                                    </tbody>
+                                </table>
+                    </div>
+                </div>
+
+
             </div>
         </div>
-        <div class="col-6 p-0" style="width: 50vw; height: 100vh">
+        <div class="col-5 p-0" style="width: 50vw; height: 100vh">
             <div id="map" style="height: 100%"></div>
         </div>
     </div>
 </div>
 <script>
-    // Function to generate the table
-    function generateTable(numColumns) {
-        let tableHtml = '<table class="table table-bordered custom-table"><thead><tr><th>Station</th>';
-        for (let i = 1; i <= numColumns; i++) {
-            tableHtml += `<th>Month ${i}</th>`;
-        }
-        tableHtml += '<th class="total-header">Total</th></tr></thead><tbody><tr>';
-        for (let i = 0; i <= numColumns; i++) {
-            // Add a custom class for the "Total" cell
-            if (i === numColumns) {
-                tableHtml += '<td class="total-cell"></td>';
-            } else {
-                tableHtml += '<td></td>';
+    function toggleBackgroundColor(cell) {
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach((otherCell) => {
+            otherCell.classList.remove('selected');
+        });
+
+        cell.classList.add('selected');
+    }
+    // Get today's date
+    const today = new Date();
+    let currentMonth = today.getMonth() + 1;
+    let currentYear = today.getFullYear();
+    console.log(today.getMonth());
+    console.log(currentMonth);
+
+    // Function to generate the calendar for a given month and year
+    function generateCalendar(year, month) {
+        const jsonData = [
+            {
+                "date": "877-123-1212",
+                "temp": "29.2",
+                "humidity": "80.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "28.2",
+                "humidity": "83.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "28.2",
+                "humidity": "83.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "28.2",
+                "humidity": "83.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "28.2",
+                "humidity": "83.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "28.2",
+                "humidity": "83.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "28.2",
+                "humidity": "83.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "28.2",
+                "humidity": "83.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "28.2",
+                "humidity": "83.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            },
+            {
+                "date": "877-123-1212",
+                "temp": "26.2",
+                "humidity": "81.2"
+            }
+        ];
+
+        const calendarBody = document.getElementById('calendar-body');
+        calendarBody.innerHTML = ''; // Clear the previous calendar
+
+        // Create a date object for the 1st day of the specified month and year
+        const firstDayOfMonth = new Date(year, month - 1, 1);
+
+        // Get the total number of days in the specified month
+        const daysInMonth = new Date(year, month, 0).getDate();
+
+        // Get the day of the week (0 for Sunday, 1 for Monday, etc.) for the 1st day of the month
+        const firstDayOfWeek = firstDayOfMonth.getDay();
+
+        let day = 1;
+
+        for (let i = 0; i < 6; i++) {
+            const row = document.createElement('tr');
+
+            for (let j = 0; j < 7; j++) {
+                const cell = document.createElement('td');
+
+                if (i === 0 && j < firstDayOfWeek) {
+                    // Empty cells before the 1st day of the month
+                } else if (day <= daysInMonth) {
+                    cell.innerText = day;
+
+                    // Calculate the day of the week for the current date
+                    const currentDayOfWeek = (firstDayOfWeek + day - 1) % 7;
+
+                    // Find the data for the current day (day - 1 because day starts from 1)
+                    const dayData = jsonData[day - 1];
+
+                    if (dayData) {
+                        // Display the date and temperature information
+                        cell.innerHTML += `<br><span class="temperature">${dayData.temp} °C</span>`;
+                        cell.innerHTML += `<br><span class="temperature">${dayData.humidity}</span>`;
+                    }
+
+                    day++;
+                }
+
+                row.appendChild(cell);
+            }
+
+            calendarBody.appendChild(row);
+            if (day > daysInMonth) break;
             }
         }
-        tableHtml += '</tr></tbody></table>';
-        document.getElementById("tableContainer").innerHTML = tableHtml;
+
+
+    function generateCalendar2(year, month) {
+        const calendarBody = document.getElementById('calendar-body2');
+        calendarBody.innerHTML = ''; // Clear the previous calendar
+
+        // Create a date object for the 1st day of the specified month and year
+        const firstDayOfMonth = new Date(year, month - 1, 1);
+
+        // Get the total number of days in the specified month
+        const daysInMonth = new Date(year, month, 0).getDate();
+
+        // Get the day of the week (0 for Sunday, 1 for Monday, etc.) for the 1st day of the month
+        const firstDayOfWeek = firstDayOfMonth.getDay();
+
+        let day = 1;
+
+        for (let i = 0; i < 6; i++) {
+            const row = document.createElement('tr');
+
+            for (let j = 0; j < 7; j++) {
+                const cell = document.createElement('td');
+
+                if (i === 0 && j < firstDayOfWeek) {
+                    // Empty cells before the 1st day of the month
+                } else if (day <= daysInMonth) {
+                    cell.innerText = day;
+
+                    // Calculate the day of the week for the current date
+                    const currentDayOfWeek = (firstDayOfWeek + day - 1) % 7;
+                    cell.innerHTML += `<br><span class="temperature">25°C</span>`;
+                    cell.innerHTML += `<br><span class="temperature">80</span>`;
+
+                    // Here, you can use currentDayOfWeek to determine the day (e.g., "Sun", "Mon")
+                    // and display the date and temperature information as needed.
+
+                    day++;
+                }
+
+                row.appendChild(cell);
+            }
+
+            calendarBody.appendChild(row);
+            if (day > daysInMonth) break;
+        }
+
     }
 
-    // Set initial value to 4 and generate the table
-    const initialColumns = 4;
-    document.getElementById("numColumns").value = initialColumns;
-    generateTable(initialColumns);
+    // Initial calendar generation
+    generateCalendar(currentYear, currentMonth);
+    generateCalendar2(currentYear, currentMonth);
 
-    document.getElementById("createTable").addEventListener("click", function () {
-        const numColumns = parseInt(document.getElementById("numColumns").value);
-
-        if (!isNaN(numColumns) && numColumns >= 4 && numColumns <= 12) {
-            generateTable(numColumns);
+    // Function to navigate to the previous month
+    function previousMonth() {
+        if (currentMonth === 0) {
+            currentYear--;
+            currentMonth = 11;
         } else {
-            alert("Number of columns must be between 4 and 12.");
+            currentMonth--;
         }
-    });
+        generateCalendar(currentYear, currentMonth);
+    }
+
+    // Function to navigate to the next month
+    function nextMonth() {
+        if (currentMonth === 11) {
+            currentYear++;
+            currentMonth = 0;
+        } else {
+            currentMonth++;
+        }
+        generateCalendar(currentYear, currentMonth);
+    }
+
+    // Update the calendar and year display
+    function updateCalendarDisplay() {
+        document.getElementById('calendar-year').textContent = currentYear;
+        document.getElementById('calendar-month').textContent = new Date(currentYear, currentMonth, 1).toLocaleString('default', {month: 'long'});
+        generateCalendar(currentYear, currentMonth);
+    }
+
+    // Attach event listeners to the previous and next buttons
+    document.getElementById('prev-month').addEventListener('click', previousMonth);
+    document.getElementById('next-month').addEventListener('click', nextMonth);
+
+    // Initial calendar display update
+    updateCalendarDisplay();
+</script>
+
+<script>
+
+
+    // var myData = "{{ results }}";
+    // console.log(myData);
+    // // Function to generate the table
+    // function generateTable(numColumns) {
+    //     let tableHtml = '<table class="table table-bordered custom-table"><thead><tr><th>Station</th>';
+    //     for (let i = 1; i <= numColumns; i++) {
+    //         tableHtml += `<th>Month ${i}</th>`;
+    //     }
+    //     tableHtml += '<th class="total-header">Total</th></tr></thead><tbody><tr>';
+    //     for (let i = 0; i <= numColumns; i++) {
+    //         // Add a custom class for the "Total" cell
+    //         if (i === numColumns) {
+    //             tableHtml += '<td class="total-cell"></td>';
+    //         } else {
+    //             tableHtml += '<td></td>';
+    //         }
+    //     }
+    //     tableHtml += '</tr></tbody></table>';
+    //     document.getElementById("tableContainer").innerHTML = tableHtml;
+    // }
+    //
+    // // Set initial value to 4 and generate the table
+    // const initialColumns = 4;
+    // document.getElementById("numColumns").value = initialColumns;
+    // generateTable(initialColumns);
+    //
+    // document.getElementById("createTable").addEventListener("click", function () {
+    //     const numColumns = parseInt(document.getElementById("numColumns").value);
+    //
+    //     if (!isNaN(numColumns) && numColumns >= 4 && numColumns <= 12) {
+    //         generateTable(numColumns);
+    //     } else {
+    //         alert("Number of columns must be between 4 and 12.");
+    //     }
+    // });
 </script>
 
 <!-- Your existing scripts here -->
