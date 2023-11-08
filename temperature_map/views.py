@@ -287,7 +287,25 @@ class WeatherDataPredictionDetails(APIView):
 
         # weather_data = WeatherDataNew.objects.filter(c_month=month, c_year=year)
         serializer = WeatherDataPredictionSerializer(weather_data, many=True)
-        return Response(serializer.data)
+        result = {}
+
+        for item in serializer.data:
+            date = item["c_date"]  # Get the date from the data
+            if date not in result:
+                result[date] = {"date": date}
+
+            data_type = item["data_type"]
+            value = float(item["value"])
+
+            if data_type == "temperature":
+                result[date]["temperature"] = value
+            elif data_type == "humidity":
+                result[date]["humidity"] = value
+        list_result = []
+        for ele in result:
+            list_result.append(result[ele])
+
+        return Response(list_result)
 
 
 class WeatherDataHistoricalDetails(APIView):
