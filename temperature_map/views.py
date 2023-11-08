@@ -111,10 +111,14 @@ class MapView(View):
                             "month": month,
                             "temperature_avg_value": result_dict[station][year][month][
                                 "temperature"
-                            ]["avg_value"],
+                            ]["avg_value"]
+                            if "temperature" in result_dict[station][year][month]
+                            else 0,
                             "humidity_avg_value": result_dict[station][year][month][
                                 "humidity"
-                            ]["avg_value"],
+                            ]["avg_value"]
+                            if "humidity" in result_dict[station][year][month]
+                            else 0,
                         }
                     )
 
