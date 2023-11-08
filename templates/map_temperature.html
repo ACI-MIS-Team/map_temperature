@@ -131,11 +131,11 @@
             font-weight: normal;
         }
         .fa-sun {
-          color: yellow; /* Define the color you want for sunny weather */
+          color: #ff7300; /* Define the color you want for sunny weather */
         }
 
         .fa-cloud-showers-heavy {
-          color: blue; /* Define the color you want for rainy weather */
+          color: #00719a; /* Define the color you want for rainy weather */
         }
         .date {
             font-weight: bold;
@@ -210,7 +210,7 @@
                             <tr>
                                 <td>{{ station }}</td>
                                 {% for data in station_data %}
-                                <td class="cell" onclick="generateCalendar('{{ data.year}}', '{{ data.month }}', '{{ data.station }}');  toggleBackgroundColor(this)">
+                                <td class="cell" onclick="generateCalendar('{{ data.year}}', '{{ data.month }}', '{{ data.station }}', '{{ data.temperature}}');  toggleBackgroundColor(this);loadMpld3Plot('{{ data.year}}', '{{ data.month }}', '{{ data.station }}')">
                                     <div class="cell-group" style="background-color: yellow">{{ data.temperature_avg_value | floatformat:1 }}
                                     </div>
                                     <div class="cell-group" style="background-color: orange">{{ data.humidity_avg_value | floatformat:1 }}
@@ -227,7 +227,7 @@
                <div class="col-12" style="margin-top: 20px">
                     <div class="row justify-content-between">
                         <div class="col-12">
-                            <p style="text-align: center; font-weight: bold; color: green">Prediction Data</p>
+                            <p style="text-align: center; font-weight: bold; color: green">Date Wise Prediction</p>
                         </div>
                     </div>
                 </div>
@@ -250,10 +250,21 @@
                                     </tbody>
                                 </table>
 
+
                     </div>
                 </div>
 
+<!--               <div class="col-12" style="margin-top: 20px">-->
+<!--                    <div class="row justify-content-between">-->
+<!--                        <div class="col-12">-->
+<!--                            <p style="text-align: center; font-weight: bold; color: green">Weather Prediction Graph</p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
 
+<!--                        <div class="col-12"  id="weather">-->
+
+<!--                        </div>-->
             </div>
         </div>
         <div class="col-5 p-0" style="width: 50vw; height: 100vh">
@@ -281,8 +292,27 @@
       rainy: 'fas fa-cloud-showers-heavy',  // Use a rainy icon
       // Add more weather conditions and icons as needed
     };
+
+    function updateWeatherPlot() {
+        $.ajax({
+          url: "http://127.0.0.1:8085/weather_data_prediction_graph/?station=Dhaka&month=12&year=2023", // Replace with the actual API endpoint URL
+          method: "GET",
+          success: function (data) {
+            console.log(data.weather_plot_html);
+            // Inject the HTML content into the 'weather-plot' div
+            $("#weather").html(data);
+          },
+          error: function (error) {
+            console.log("Error:", error);
+          },
+        });
+    }
+    updateWeatherPlot()
+    generateCalendar(2023,11, "Dhaka")
     // Function to generate the calendar for a given month and year
-    function generateCalendar(year, month,station) {
+    function generateCalendar(year, month,station, avg_temp) {
+
+        console.log(avg_temp);
 
         fetch(`http://127.0.0.1:8085/weather_data_prediction_details/?year=${year}&month=${month}&station=${station}`, {
             method: 'GET', // or 'POST' if your API requires it
@@ -335,7 +365,7 @@
                         if(dayData.rainy===true){
                             console.log("paise")
                             rainyIcon.className = weatherIcons.rainy;
-                        }if(dayData.temperature>=20.2){
+                        }if(dayData.temperature>=25.2){
                                 sunnyIcon.className = weatherIcons.sunny;
                         }
                         // Create a space element (e.g., a span with margin) to separate the date and the icon
@@ -392,7 +422,7 @@
 
 
     // Initial calendar generation
-    generateCalendar(currentYear, currentMonth,"Ambagan(Ctg)");
+    // generateCalendar(currentYear, currentMonth,"Ambagan(Ctg)");
 
     // Function to navigate to the previous month
     function previousMonth() {
@@ -473,6 +503,7 @@
 
 <!-- Your existing scripts here -->
 
+<script src="https://mpld3.github.io/js/mpld3.v0.5.2.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
