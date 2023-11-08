@@ -130,11 +130,11 @@
             color: black;
             font-weight: normal;
         }
-        .weather-icon-sunny {
+        .fa-sun {
           color: yellow; /* Define the color you want for sunny weather */
         }
 
-        .weather-icon-rainy {
+        .fa-cloud-showers-heavy {
           color: blue; /* Define the color you want for rainy weather */
         }
         .date {
@@ -227,7 +227,7 @@
                <div class="col-12" style="margin-top: 20px">
                     <div class="row justify-content-between">
                         <div class="col-12">
-                            <p style="text-align: center; font-weight: bold; color: green">Table 1: Prediction Data</p>
+                            <p style="text-align: center; font-weight: bold; color: green">Prediction Data</p>
                         </div>
                     </div>
                 </div>
@@ -294,99 +294,96 @@
         .then(data => {
             console.log(data);
             const calendarBody = document.getElementById('calendar-body');
-        calendarBody.innerHTML = ''; // Clear the previous calendar
+            calendarBody.innerHTML = ''; // Clear the previous calendar
 
-        // Create a date object for the 1st day of the specified month and year
-        const firstDayOfMonth = new Date(year, month - 1, 1);
+            // Create a date object for the 1st day of the specified month and year
+            const firstDayOfMonth = new Date(year, month - 1, 1);
 
-        // Get the total number of days in the specified month
-        const daysInMonth = new Date(year, month, 0).getDate();
+            // Get the total number of days in the specified month
+            const daysInMonth = new Date(year, month, 0).getDate();
 
-        // Get the day of the week (0 for Sunday, 1 for Monday, etc.) for the 1st day of the month
-        const firstDayOfWeek = firstDayOfMonth.getDay();
+            // Get the day of the week (0 for Sunday, 1 for Monday, etc.) for the 1st day of the month
+            const firstDayOfWeek = firstDayOfMonth.getDay();
 
-        let day = 1;
+            let day = 1;
 
-        for (let i = 0; i < 6; i++) {
-            const row = document.createElement('tr');
+            for (let i = 0; i < 6; i++) {
+                const row = document.createElement('tr');
 
-            for (let j = 0; j < 7; j++) {
-              const cell = document.createElement('td');
+                for (let j = 0; j < 7; j++) {
+                  const cell = document.createElement('td');
 
-              if (i === 0 && j < firstDayOfWeek) {
-                // Empty cells before the 1st day of the month
-              } else if (day <= daysInMonth) {
+                  if (i === 0 && j < firstDayOfWeek) {
+                    // Empty cells before the 1st day of the month
+                  } else if (day <= daysInMonth) {
 
-                // Calculate the day of the week for the current date
-                const currentDayOfWeek = (firstDayOfWeek + day - 1) % 7;
+                    // Calculate the day of the week for the current date
+                    const currentDayOfWeek = (firstDayOfWeek + day - 1) % 7;
 
-                // Find the data for the current day (day - 1 because day starts from 1)
-                const dayData = data[day - 1];
+                    // Find the data for the current day (day - 1 because day starts from 1)
+                    const dayData = data[day - 1];
 
-                if (dayData) {
-                  // Create a container for the date and icon
-                   const container = document.createElement('div');
+                    if (dayData) {
+                      // Create a container for the date and icon
+                       const container = document.createElement('div');
 
-                    // Display the date
-                    const dateElement = document.createElement('span');
-                    dateElement.innerText = day;
+                        // Display the date
+                        const dateElement = document.createElement('span');
+                        dateElement.innerText = day;
+                        let rainyIcon = document.createElement('i');
+                        let sunnyIcon = document.createElement('i');
+                        if(dayData.rainy===true){
+                            console.log("paise")
+                            rainyIcon.className = weatherIcons.rainy;
+                        }if(dayData.temperature>=20.2){
+                                sunnyIcon.className = weatherIcons.sunny;
+                        }
+                        // Create a space element (e.g., a span with margin) to separate the date and the icon
+                        const space = document.createElement('span');
+                        space.style.margin = '0 5px'; // Adjust the margin as needed for the desired gap
 
-                    // Check if it's raining and add the rainy weather icon
-                    const rainyIcon = document.createElement('i');
-                    rainyIcon.className = weatherIcons.rainy;
+                        // Append the date element on the left
+                        container.appendChild(dateElement);
 
-                    // Create a space element (e.g., a span with margin) to separate the date and the icon
-                    const space = document.createElement('span');
-                    space.style.margin = '0 5px'; // Adjust the margin as needed for the desired gap
+                        // Append the space in the middle
+                        container.appendChild(space);
 
-                    // Append the date element on the left
-                    container.appendChild(dateElement);
+                        // Append the rainy icon on the right
+                        container.appendChild(sunnyIcon);
+                        container.appendChild(rainyIcon);
 
-                    // Append the space in the middle
-                    container.appendChild(space);
+                        // Set the container to have a display style of flex
+                        container.style.display = 'flex';
 
-                    // Append the rainy icon on the right
-                    container.appendChild(rainyIcon);
-
-                    // Set the container to have a display style of flex
-                    container.style.display = 'flex';
-
-                    // Align date and rainy icon at the extremes of the container
-                    dateElement.style.marginRight = 'auto';
-                    rainyIcon.style.marginLeft = 'auto';
-
-                    // Append the date on the left
-                    container.appendChild(dateElement);
-
-                    // Append the space in the middle
-                    container.appendChild(space);
-
-                    // Append the rainy icon on the right
-                    container.appendChild(rainyIcon);
-
-                    // Display the date, space, and the rainy icon
-                    cell.appendChild(container);
-
-                    // Display the temperature and humidity information as before
-                    cell.innerHTML += `<br><i class="fas fa-thermometer-half"></i> <span class="temperature">${dayData.temperature} °C</span>`;
-                    cell.innerHTML += `<br><i class="fas fa-tint"></i> <span class="humidity">${dayData.humidity}</span>`;
+                        // Align date and rainy icon at the extremes of the container
+                        dateElement.style.marginRight = 'auto';
+                        rainyIcon.style.marginLeft = 'auto';
 
 
+
+                        // Display the date, space, and the rainy icon
+                        cell.appendChild(container);
+
+                        // Display the temperature and humidity information as before
+                        cell.innerHTML += `<br><i class="fas fa-thermometer-half"></i> <span class="temperature">${dayData.temperature} °C</span>`;
+                        cell.innerHTML += `<br><i class="fas fa-tint"></i> <span class="humidity">${dayData.humidity}</span>`;
+
+
+                    }
+
+                    day++;
+                  }
+
+                  row.appendChild(cell);
                 }
 
-                day++;
-              }
-
-              row.appendChild(cell);
-            }
-
-            calendarBody.appendChild(row);
-                if (day > daysInMonth) break;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+                calendarBody.appendChild(row);
+                    if (day > daysInMonth) break;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
 
 
 
