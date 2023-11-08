@@ -27,7 +27,16 @@ SECRET_KEY = "django-insecure-r6e18n@ze_0!5(4r^9hp08h3e(hbhn--a*y)su0kk)!j(0ub3e
 DEBUG = True
 
 ALLOWED_HOSTS = []
+CORS_ALLOW_ALL_ORIGINS = False
 
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:8085',  # Add your frontend development origin
+    'http://localhost:8085',  # Add your frontend development origin
+    # Add other origins as needed
+]
+
+# To allow credentials such as cookies, set this to True
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -51,6 +60,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = "configure.urls"
