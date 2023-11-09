@@ -210,7 +210,7 @@
                             <tr>
                                 <td>{{ station }}</td>
                                 {% for data in station_data %}
-                                <td class="cell" onclick="generateCalendar('{{ data.year}}', '{{ data.month }}', '{{ data.station }}', '{{ data.temperature}}');  toggleBackgroundColor(this);loadMpld3Plot('{{ data.year}}', '{{ data.month }}', '{{ data.station }}')">
+                                <td class="cell" onclick="generateCalendar('{{ data.year}}', '{{ data.month }}', '{{ data.station }}', '{{ data.temperature_avg_value}}');  toggleBackgroundColor(this);loadMpld3Plot('{{ data.year}}', '{{ data.month }}', '{{ data.station }}')">
                                     <div class="cell-group" style="background-color: yellow">{{ data.temperature_avg_value | floatformat:1 }}
                                     </div>
                                     <div class="cell-group" style="background-color: orange">{{ data.humidity_avg_value | floatformat:1 }}
@@ -327,7 +327,8 @@
     // Function to generate the calendar for a given month and year
     function generateCalendar(year, month,station, avg_temp) {
 
-        console.log(avg_temp);
+        let temp = 2.0
+        let total_temp = parseFloat(avg_temp) + temp
 
         fetch(`http://192.168.100.113:8085/weather_data_prediction_details/?year=${year}&month=${month}&station=${station}`, {
             method: 'GET', // or 'POST' if your API requires it
@@ -380,8 +381,8 @@
                         if(dayData.rainy===true){
                             console.log("paise")
                             rainyIcon.className = weatherIcons.rainy;
-                        }if(dayData.temperature>=25.2){
-                                sunnyIcon.className = weatherIcons.sunny;
+                        }if(dayData.temperature>=total_temp){
+                            sunnyIcon.className = weatherIcons.sunny;
                         }
                         // Create a space element (e.g., a span with margin) to separate the date and the icon
                         const space = document.createElement('span');
