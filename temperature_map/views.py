@@ -335,6 +335,8 @@ class WeatherDataPredictionDetails(APIView):
                     "temperature": None,
                     "humidity": None,
                     "rainy": False,
+                    "value_upper": None,
+                    "value_lower": None
                 }
 
             data_type = item["data_type"]
@@ -348,6 +350,9 @@ class WeatherDataPredictionDetails(APIView):
                 result[date]["humidity"] = value
             elif data_type == "rainy":
                 result[date]["rainy"] = value
+            
+            result[date]['value_upper'] = item['value_upper']
+            result[date]['value_lower'] = item['value_lower']
 
         list_result = []
         for ele in result:
@@ -402,6 +407,7 @@ class WeatherDataPredictionGraph(APIView):
                 result[date]["temperature"] = value
             elif data_type == "humidity":
                 result[date]["humidity"] = value
+        
         list_result = []
         for ele in result:
             list_result.append(result[ele])

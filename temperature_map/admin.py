@@ -12,7 +12,7 @@ class WeatherDataNewAdmin(admin.ModelAdmin):
 
 
 class WeatherDataPredictionAdmin(admin.ModelAdmin):
-    list_display = ['station', 'c_year', 'c_month', 'c_day', 'c_date', 'value', 'data_type', 'source']
+    list_display = ['station', 'c_year', 'c_month', 'c_day', 'c_date', 'value', 'value_lower', 'value_upper', 'data_type', 'source']
 
 
 admin.site.register(WeatherData, WeatherDataAdmin)

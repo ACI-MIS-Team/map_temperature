@@ -39,6 +39,8 @@ class WeatherDataPrediction(models.Model):
     value = models.DecimalField(blank=True, null=True, db_column='Value', max_digits=15, decimal_places=6)
     data_type = models.CharField(blank=True, null=True, max_length=50, db_column='datatype')
     source = models.CharField(blank=True, null=True, max_length=50, db_column='source')
+    value_lower = models.DecimalField(blank=True, null=True, max_digits=15, decimal_places=6, db_column='Value_Lower')
+    value_upper = models.DecimalField(blank=True, null=True, max_digits=15, decimal_places=6, db_column='Value_Upper')
 
     class Meta:
         managed = False
