@@ -25,4 +25,14 @@ urlpatterns = [
         views.WeatherDataHistoricalDetails.as_view(),
         name="weather-data-new-list",
     ),
+    path(
+        "points_place/",
+        views.PointsPlaceList.as_view(),
+        name="points-place-list",
+    ),
+     path(
+        "points_place/<str:place_id>",
+        views.PointsPlaceDetails.as_view(),
+        name="points-place-details",
+    ),    
 ]

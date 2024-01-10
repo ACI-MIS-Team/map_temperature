@@ -7,8 +7,9 @@ from django.db.models import Avg
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from temperature_map.models import WeatherData, WeatherDataNew, WeatherDataPrediction
+from temperature_map.models import PointsPlace, WeatherData, WeatherDataNew, WeatherDataPrediction
 from temperature_map.serializer import (
+    PointsPlaceSerializer,
     WeatherDataNewSerializer,
     WeatherDataPredictionSerializer,
     WeatherDataSerializer,
@@ -448,3 +449,28 @@ class WeatherDataHistoricalDetails(APIView):
 
         serializer = WeatherDataNewSerializer(weather_data, many=True)
         return Response(serializer.data)
+
+
+class PointsPlaceList(APIView):
+    def get(self, request):
+        points_place_data = PointsPlace.objects.all()
+        serializer = PointsPlaceSerializer(points_place_data, many=True)
+        return Response(serializer.data)
+
+
+class PointsPlaceDetails(APIView):
+    def get(self, request, place_id, format=None):
+        try:
+            points_place = PointsPlace.objects.get(place_id=place_id)
+            serializer = PointsPlaceSerializer(points_place)
+            return Response({
+                'status': 200,
+                'message': 'Success',
+                'data': serializer.data
+            })
+        except Exception as exp:
+            return Response({
+                'status': 400,
+                'message': str(exp),
+                'data': {}
+            })

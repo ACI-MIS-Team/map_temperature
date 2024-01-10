@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from temperature_map.models import WeatherData, WeatherDataNew, WeatherDataPrediction
+from temperature_map.models import PointsPlace, WeatherData, WeatherDataNew, WeatherDataPrediction
 
 
 class WeatherDataAdmin(admin.ModelAdmin):
@@ -15,6 +15,11 @@ class WeatherDataPredictionAdmin(admin.ModelAdmin):
     list_display = ['station', 'c_year', 'c_month', 'c_day', 'c_date', 'value', 'value_lower', 'value_upper', 'data_type', 'source']
 
 
+class PointsPlaceAdmin(admin.ModelAdmin):
+    list_display = ['name', 'place_id', 'lat', 'lon']
+
+
 admin.site.register(WeatherData, WeatherDataAdmin)
 admin.site.register(WeatherDataNew, WeatherDataNewAdmin)
 admin.site.register(WeatherDataPrediction, WeatherDataPredictionAdmin)
+admin.site.register(PointsPlace, PointsPlaceAdmin)

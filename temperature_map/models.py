@@ -45,3 +45,14 @@ class WeatherDataPrediction(models.Model):
     class Meta:
         managed = False
         db_table = "WeatherDataPrediction"
+
+
+class PointsPlace(models.Model):
+    name = models.CharField(blank=True, null=True, max_length=50, db_column='name')
+    place_id = models.CharField(blank=True, null=True, db_column='place_id', max_length=50)
+    lat = models.DecimalField(blank=True, null=True, db_column='lat', max_digits=18, decimal_places=6)
+    lon = models.DecimalField(blank=True, null=True, db_column='lon', max_digits=18, decimal_places=6)
+
+    class Meta:
+        managed = False
+        db_table = "points_place"

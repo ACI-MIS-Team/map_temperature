@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import WeatherData, WeatherDataNew, WeatherDataPrediction
+from .models import PointsPlace, WeatherData, WeatherDataNew, WeatherDataPrediction
 
 
 class WeatherDataSerializer(serializers.ModelSerializer):
@@ -17,4 +17,9 @@ class WeatherDataNewSerializer(serializers.ModelSerializer):
 class WeatherDataPredictionSerializer(serializers.ModelSerializer):
     class Meta:
         model = WeatherDataPrediction
+        fields = '__all__'
+
+class PointsPlaceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PointsPlace
         fields = '__all__'
