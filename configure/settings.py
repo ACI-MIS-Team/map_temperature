@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-r6e18n@ze_0!5(4r^9hp08h3e(hbhn--a*y)su0kk)!j(0ub3e
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:8085',  # Add your frontend development origin
@@ -141,16 +141,14 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-STATIC_URL = "static/"
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-STATIC_URL = "/static/"
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+# USE_TZ = True
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+STATIC_URL = '/static/'

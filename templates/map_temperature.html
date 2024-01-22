@@ -24,18 +24,14 @@
         body {
             margin: 0;
             padding: 0;
-            height: 200px;
-        }
-
-        #map {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 50%;
         }
 
         .custom-table td {
             width: 50px; /* Adjust the width as needed */
+            vertical-align: middle !important;
+        }
+        .custom-table .cell{
+            background-color: #093D6D;
         }
 
         .table td.total-cell {
@@ -49,24 +45,30 @@
 
         .table {
             width: 100%; /* Set the width to 100% of the container */
+            table-layout: auto !important ;
         }
 
         /* Style for the smaller table */
         .smaller-table {
             font-size: 11px; /* Adjust the font size as needed */
         }
-
-        .cell-group {
-            display: flex; /* Use flexbox to control the layout */
+        .smaller-table th{
+            padding: 0;
+        }
+        .smaller-table td {
+            padding: 0 !important; /* Adjust the padding as needed */
+        }
+        .cell-group{
             justify-content: space-between; /* Separate the values within the cell */
             align-content: center;
-            padding: 5px; /* Adjust padding as needed */
-            border: 1px solid #000; /* Add border styles as desired */
+            padding: 10px;
+            background-color: red;
         }
-
-        .smaller-table th,
-        .smaller-table td {
-            padding: 0; /* Adjust the padding as needed */
+        .cell-group1{
+            background-color: #E0E0E0;
+        }
+        .cell-group2{
+            background-color: #cbcbcb;
         }
 
         .value1, .value2, .total-value1, .total-value2 {
@@ -88,17 +90,21 @@
             color: #fff;
             font-weight: bold;
         }
+
         .cell {
             padding: 5px;
             cursor: pointer;
         }
+
         .selected {
-                background-color: #ffa500; /* Change to your desired clicked background color */
-            }
+            background-color: #ffa500; /* Change to your desired clicked background color */
+        }
+
         .cell:hover {
             background-color: #ffa500; /* Change to your desired hover background color */
             cursor: pointer; /* Change to a pointer cursor to indicate it's clickable */
         }
+
         .calendar th, .calendar td {
             border: 1px solid #ccc;
             padding: 4px;
@@ -112,33 +118,104 @@
             color: black;
             cursor: pointer;
         }
-         .calendar .fa-thermometer-half{
-             color: #989800;
-         }
-         .calendar .fa-tint{
-             color: orange;
-         }
+
+        .calendar .fa-thermometer-half {
+            color: #989800;
+        }
+
+        .calendar .fa-tint {
+            color: orange;
+        }
 
         .temperature {
             font-size: 14px;
             color: black;
             font-weight: normal;
         }
-
+        .top_sub_title{
+            color: #fff;
+            font-size: 26px;
+            font-weight: normal;
+        }
+        .top_temperature{
+            font-weight: bold;
+            color: #fff;
+            font-size: 30px;
+        }
         .humidity {
             font-size: 14px;
             color: black;
             font-weight: normal;
         }
+
         .fa-sun {
-          color: #ff7300; /* Define the color you want for sunny weather */
+            color: #ff7300; /* Define the color you want for sunny weather */
         }
 
         .fa-cloud-showers-heavy {
-          color: #00719a; /* Define the color you want for rainy weather */
+            color: #00719a; /* Define the color you want for rainy weather */
         }
+
         .date {
             font-weight: bold;
+        }
+        .weather-division{
+            padding: 8px;
+            width: 80px;
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            margin-right: 10px;
+        }
+
+        input {
+            border: 1px solid #DCDCDC; /* Add a border */
+            border-radius: 77px; /* Set border-radius for rounded corners */
+            padding: 8px; /* Add some padding for better visual appearance */
+            font-size: 15px;
+            width: 320px;
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+        .tempDiv{
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 5px 10px 8px #dddddd;
+        }
+
+        .info-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-top: 8px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-top: 4px;
+            font-size: 12px;
+        }
+        .topbar{
+            align-content:center;
+            height: 130px;
+            background-image: url('{% static 'img/background.svg' %}');
+            padding:  0 20px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 5px;
         }
     </style>
 
@@ -181,106 +258,117 @@
 </head>
 <body>
 <div class="container-fluid p-0">
-    <div class="row m-0">
-        <div class="col-7 bg-white p-0" style="width: 50vw">
-            <div class="container mt-8">
-                <!--                <br>-->
-                <!--                <h6>Prediction Table</h6>-->
-                <!--                <div class="form-group form-inline">-->
-                <!--                    <form>-->
-                <!--                        <div class="form-group">-->
-                <!--                            <input type="number" class="form-control" id="numColumns" min="4" max="12" value="4">-->
-                <!--                        </div>-->
-                <!--                    </form>-->
-                <!--                    <button class="btn btn-primary" style="margin-left: 20px" id="createTable">Show</button>-->
-                <!--                </div>-->
-                <div id="tableContainer" class="mt-4">
-                    <div class="table-scroll-container" style="height: 400px;">
-                        <table class="table table-bordered custom-table smaller-table">
-                            <thead>
-                            <tr>
-                                <th>Station</th>
-                                {% for month in months %}
-                                <th>{{month}}</th>
-                                {% endfor %}
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for station, station_data in results.items %}
-                            <tr>
-                                <td>{{ station }}</td>
-                                {% for data in station_data %}
-                                <td class="cell" onclick="generateCalendar('{{ data.year}}', '{{ data.month }}', '{{ data.station }}', '{{ data.temperature_avg_value}}');  toggleBackgroundColor(this);loadMpld3Plot('{{ data.year}}', '{{ data.month }}', '{{ data.station }}')">
-                                    <div class="cell-group" style="background-color: yellow">{{ data.temperature_avg_value | floatformat:1 }}
-                                    </div>
-                                    <div class="cell-group" style="background-color: orange">{{ data.humidity_avg_value | floatformat:1 }}
-                                    </div>
-                                </td>
-                                {% endfor %}
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-
-                        </table> 
-                    </div>
+    <div class="topbar row m-0">
+        <div class="col-2">
+            <h2 class="top_temperature">29 °C</h2>
+            <h2 class="top_sub_title">Today, Dhaka</h2>
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <div class="weather-division" align="center">
+                    <img src="{% static 'img/sunny.svg' %}" height="20px">
+                    <h6>Barisal</h6>
+                    <h6>29 °C</h6>
                 </div>
-                <br/>
-                <div style="display: flex;">
-                    <div class="yellow-box" style="background-color: yellow; width: 15px; height: 15px;"></div> 
-                    <div style="font-size: 12px; padding-left: 10px;"> Temperature</div>
+                <div class="weather-division" align="center">
+                    <img src="{% static 'img/sunny.svg' %}" height="20px">
+                    <h6>Barisal</h6>
+                    <h6>29 °C</h6>
                 </div>
-                <div style="display: flex;">
-                    <div class="yellow-box" style="background-color: orange; width: 15px; height: 15px;"></div>
-                    <div style="font-size: 12px; padding-left: 10px;"> Humidity</div>
-                </div>
-
-               <div class="col-12" style="margin-top: 20px">
-                    <div class="row justify-content-between">
-                        <div class="col-12">
-                            <p style="text-align: center; font-weight: bold; color: green">Date Wise Prediction</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-12">
-                    <div class="row">
-                        <table class="calendar col-11">
-                                    <thead>
-                                    <tr>
-                                        <th>Sun</th>
-                                        <th>Mon</th>
-                                        <th>Tue</th>
-                                        <th>Wed</th>
-                                        <th>Thu</th>
-                                        <th>Fri</th>
-                                        <th>Sat</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody id="calendar-body">
-                                    </tbody>
-                                </table>
-
-
-                    </div>
-                </div>
-
-<!--               <div class="col-12" style="margin-top: 20px">-->
-<!--                    <div class="row justify-content-between">-->
-<!--                        <div class="col-12">-->
-<!--                            <p style="text-align: center; font-weight: bold; color: green">Weather Prediction Graph</p>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-
-<!--                        <div class="col-12"  id="weather">-->
-
-<!--                        </div>-->
             </div>
         </div>
-        <div class="col-5 p-0" style="width: 50vw; height: 100vh">
-            <div id="map" style="height: 100%"></div>
+        <div class="col-2">
+            <h2 class="top_sub_title" align="right">Time</h2>
+            <h2 class="top_sub_title" align="right">2:58 PM</h2>
         </div>
     </div>
+    <div class="row m-0" style="height: 81px; padding-top: 10px; padding-bottom: 10px">
+        <div class="col-10 bg-white">
+            <form action="/search" method="GET">
+                <label for="searchBox" style="font-size: 15px; font-weight: bold; margin-right: 10px">64 Stations</label>
+                <input type="text" id="searchBox" name="query" placeholder="Type station name">
+            </form>
+        </div>
+        <div class="col-2 bg-white p-0">
+            <div class="info-container">
+                <div style="display: flex;">
+                    <img src="{% static 'img/temperature.svg' %}" height="21px">
+                    <div style="font-size: 12px;">Temperature</div>
+                </div>
+                <div style="display: flex;margin-top: 4px">
+                    <img src="{% static 'img/humidity.svg' %}" height="21px">
+                    <div style="font-size: 12px; ">Humidity</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row m-0" style="background-color:#EFF3F4; padding-top: 10px; padding-bottom: 10px;">
+        <div class="col-7 tempDiv">
+            <div id="tableContainer" class="table-scroll-container" style="max-height:500px; overflow-x: auto;">
+                <table class="table table-bordered custom-table smaller-table">
+                        <thead>
+                        <tr>
+                            <th>Station</th>
+                            {% for month in months %}
+                            <th style="background-color: #002F5B; color: white">{{month}}</th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for station, station_data in results.items %}
+                        <tr>
+                            <td>{{ station }}</td>
+                            {% for data in station_data %}
+                            <td class="cell"  onclick="generateCalendar('{{ data.year}}', '{{ data.month }}', '{{ data.station }}', '{{ data.temperature_avg_value}}');  toggleBackgroundColor(this); openModal('dateWisePredictionModal')">
+<!--                            <td class="cell" onclick="">-->
+                                <img class="cell-image" src="{% static 'img/sunny.svg' %}" height="40px" style="padding: 7px">
+                                <div class="cell-group cell-group1">{{ data.temperature_avg_value | floatformat:1 }}</div>
+                                <div class="cell-group cell-group2">{{ data.humidity_avg_value | floatformat:1 }}</div>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+
+                    </table>
+            </div>
+        </div>
+        <div class="col-5" style="max-height: 500px">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="dateWisePredictionModal">
+        <div class="modal-content container">
+
+            <div align="right"><button onclick="closeModal('dateWisePredictionModal')" style="font-weight: bold">X</button></div>
+            <br>
+            <center><h5>Date Wise Prediction</h5></center>
+            <br>
+            <div class="mt-12">
+                <div class="row">
+                    <table class="calendar col-11">
+                        <thead>
+                            <tr>
+                                <th>Sun</th>
+                                <th>Mon</th>
+                                <th>Tue</th>
+                                <th>Wed</th>
+                                <th>Thu</th>
+                                <th>Fri</th>
+                                <th>Sat</th>
+                            </tr>
+                        </thead>
+                        <tbody id="calendar-body">
+                            <!-- Add your calendar content here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </div>
 <script>
     function toggleBackgroundColor(cell) {
@@ -291,6 +379,16 @@
 
         cell.classList.add('selected');
     }
+
+    function openModal(modalId) {
+        var modal = document.getElementById(modalId);
+        modal.style.display = "block";
+    }
+
+    function closeModal(modalId) {
+        var modal = document.getElementById(modalId);
+        modal.style.display = "none";
+    }
     // Get today's date
     const today = new Date();
     let currentMonth = today.getMonth() + 1;
@@ -298,33 +396,19 @@
     console.log(today.getMonth());
     console.log(currentMonth);
     const weatherIcons = {
-      sunny: 'fas fa-sun',  // Replace with the appropriate sunny icon
-      rainy: 'fas fa-cloud-showers-heavy',  // Use a rainy icon
-      // Add more weather conditions and icons as needed
+        sunny: 'fas fa-sun',  // Replace with the appropriate sunny icon
+        rainy: 'fas fa-cloud-showers-heavy',  // Use a rainy icon
+        // Add more weather conditions and icons as needed
     };
 
-    function updateWeatherPlot() {
-        console.log("http://192.168.100.113:8085/weather_data_prediction_graph/?station=Dhaka&month=12&year=2023");
-        $.ajax({
-          url: "http://192.168.100.113:8085/weather_data_prediction_graph/?station=Dhaka&month=12&year=2023", // Replace with the actual API endpoint URL
-          method: "GET",
-          success: function (data) {
-            console.log(data.weather_plot_html);
-            // Inject the HTML content into the 'weather-plot' div
-            $("#weather").html(data);
-          },
-          error: function (error) {
-            console.log("Error:", error);
-          },
-        });
-    }
-    updateWeatherPlot()
-    generateCalendar(2023,11, "Dhaka")
-    // Function to generate the calendar for a given month and year
-    function generateCalendar(year, month,station, avg_temp) {
 
-        let temp = 2.0
-        let total_temp = parseFloat(avg_temp) + temp
+    generateCalendar(2023, 11, "Dhaka")
+
+    // Function to generate the calendar for a given month and year
+    function generateCalendar(year, month, station, avg_temp) {
+
+        let temp = 2.0;
+        let total_temp = parseFloat(avg_temp) + temp;
 
         fetch(`http://192.168.100.113:8085/weather_data_prediction_details/?year=${year}&month=${month}&station=${station}`, {
             method: 'GET', // or 'POST' if your API requires it
@@ -332,94 +416,94 @@
                 'Content-Type': 'application/json',
             },
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            const calendarBody = document.getElementById('calendar-body');
-            calendarBody.innerHTML = ''; // Clear the previous calendar
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                const calendarBody = document.getElementById('calendar-body');
+                calendarBody.innerHTML = ''; // Clear the previous calendar
 
-            // Create a date object for the 1st day of the specified month and year
-            const firstDayOfMonth = new Date(year, month - 1, 1);
+                // Create a date object for the 1st day of the specified month and year
+                const firstDayOfMonth = new Date(year, month - 1, 1);
 
-            // Get the total number of days in the specified month
-            const daysInMonth = new Date(year, month, 0).getDate();
+                // Get the total number of days in the specified month
+                const daysInMonth = new Date(year, month, 0).getDate();
 
-            // Get the day of the week (0 for Sunday, 1 for Monday, etc.) for the 1st day of the month
-            const firstDayOfWeek = firstDayOfMonth.getDay();
+                // Get the day of the week (0 for Sunday, 1 for Monday, etc.) for the 1st day of the month
+                const firstDayOfWeek = firstDayOfMonth.getDay();
 
-            let day = 1;
+                let day = 1;
 
-            for (let i = 0; i < 6; i++) {
-                const row = document.createElement('tr');
+                for (let i = 0; i < 6; i++) {
+                    const row = document.createElement('tr');
 
-                for (let j = 0; j < 7; j++) {
-                  const cell = document.createElement('td');
+                    for (let j = 0; j < 7; j++) {
+                        const cell = document.createElement('td');
 
-                  if (i === 0 && j < firstDayOfWeek) {
-                    // Empty cells before the 1st day of the month
-                  } else if (day <= daysInMonth) {
+                        if (i === 0 && j < firstDayOfWeek) {
+                            // Empty cells before the 1st day of the month
+                        } else if (day <= daysInMonth) {
 
-                    // Calculate the day of the week for the current date
-                    const currentDayOfWeek = (firstDayOfWeek + day - 1) % 7;
+                            // Calculate the day of the week for the current date
+                            const currentDayOfWeek = (firstDayOfWeek + day - 1) % 7;
 
-                    // Find the data for the current day (day - 1 because day starts from 1)
-                    const dayData = data[day - 1];
+                            // Find the data for the current day (day - 1 because day starts from 1)
+                            const dayData = data[day - 1];
 
-                    if (dayData) {
-                      // Create a container for the date and icon
-                       const container = document.createElement('div');
+                            if (dayData) {
+                                // Create a container for the date and icon
+                                const container = document.createElement('div');
 
-                        // Display the date
-                        const dateElement = document.createElement('span');
-                        dateElement.innerText = day;
-                        let rainyIcon = document.createElement('i');
-                        let sunnyIcon = document.createElement('i');
-                        if(dayData.rainy===true){
-                            console.log("paise")
-                            rainyIcon.className = weatherIcons.rainy;
-                        }if(dayData.temperature>=total_temp){
-                            sunnyIcon.className = weatherIcons.sunny;
+                                // Display the date
+                                const dateElement = document.createElement('span');
+                                dateElement.innerText = day;
+                                let rainyIcon = document.createElement('i');
+                                let sunnyIcon = document.createElement('i');
+                                if (dayData.rainy === true) {
+                                    console.log("paise")
+                                    rainyIcon.className = weatherIcons.rainy;
+                                }
+                                if (dayData.temperature >= total_temp) {
+                                    sunnyIcon.className = weatherIcons.sunny;
+                                }
+                                // Create a space element (e.g., a span with margin) to separate the date and the icon
+                                const space = document.createElement('span');
+                                space.style.margin = '0 5px'; // Adjust the margin as needed for the desired gap
+
+                                // Append the date element on the left
+                                container.appendChild(dateElement);
+
+                                // Append the space in the middle
+                                container.appendChild(space);
+
+                                // Append the rainy icon on the right
+                                container.appendChild(sunnyIcon);
+                                container.appendChild(rainyIcon);
+
+                                // Set the container to have a display style of flex
+                                container.style.display = 'flex';
+
+                                // Align date and rainy icon at the extremes of the container
+                                dateElement.style.marginRight = 'auto';
+                                rainyIcon.style.marginLeft = 'auto';
+
+
+                                // Display the date, space, and the rainy icon
+                                cell.appendChild(container);
+
+                                // Display the temperature and humidity information as before
+                                cell.innerHTML += `<br><i class="fas fa-thermometer-half"></i> <span class="temperature">${dayData.temperature} °C</span>`;
+                                cell.innerHTML += `<br><i class="fas fa-tint"></i> <span class="humidity">${dayData.humidity}</span>`;
+
+
+                            }
+
+                            day++;
                         }
-                        // Create a space element (e.g., a span with margin) to separate the date and the icon
-                        const space = document.createElement('span');
-                        space.style.margin = '0 5px'; // Adjust the margin as needed for the desired gap
 
-                        // Append the date element on the left
-                        container.appendChild(dateElement);
-
-                        // Append the space in the middle
-                        container.appendChild(space);
-
-                        // Append the rainy icon on the right
-                        container.appendChild(sunnyIcon);
-                        container.appendChild(rainyIcon);
-
-                        // Set the container to have a display style of flex
-                        container.style.display = 'flex';
-
-                        // Align date and rainy icon at the extremes of the container
-                        dateElement.style.marginRight = 'auto';
-                        rainyIcon.style.marginLeft = 'auto';
-
-
-
-                        // Display the date, space, and the rainy icon
-                        cell.appendChild(container);
-
-                        // Display the temperature and humidity information as before
-                        cell.innerHTML += `<br><i class="fas fa-thermometer-half"></i> <span class="temperature">${dayData.temperature} °C</span>`;
-                        cell.innerHTML += `<br><i class="fas fa-tint"></i> <span class="humidity">${dayData.humidity}</span>`;
-
-
+                        row.appendChild(cell);
                     }
 
-                    day++;
-                  }
-
-                  row.appendChild(cell);
-                }
-
-                calendarBody.appendChild(row);
+                    calendarBody.appendChild(row);
                     if (day > daysInMonth) break;
                 }
             })
@@ -428,9 +512,7 @@
             });
 
 
-
-        }
-
+    }
 
 
     // Initial calendar generation
