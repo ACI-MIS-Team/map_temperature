@@ -96,8 +96,8 @@ DATABASES = {
         "ENGINE": "mssql",
         "NAME": "AIDataset",
         "USER": "sa",
-        "PASSWORD": "Dhaka@2345",
-        "HOST": "192.168.101.230",
+        "PASSWORD": "dataport",
+        "HOST": "192.168.100.128",
         "PORT": "1433",
         'OPTIONS': {
             'driver': 'FreeTDS',

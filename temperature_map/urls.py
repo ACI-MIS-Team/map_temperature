@@ -34,5 +34,10 @@ urlpatterns = [
         "points_place/<str:place_id>",
         views.PointsPlaceDetails.as_view(),
         name="points-place-details",
-    ),    
+    ),
+    path(
+        "insert_meteosource_weather_data/",
+        views.InsertMeteosourceWeatherData.as_view(),
+        name="insert-meteosource-weather-data",
+    ),   
 ]
