@@ -5,9 +5,9 @@ import os
 import requests
 
 from celery import shared_task
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from temperature_map.models import PointsPlace, WeatherDataMeteosource
+from temperature_map.models import PointsPlace, WeatherDataMeteosource, WeatherDataPrediction
 
 
 def formatted_ts():
@@ -243,3 +243,42 @@ def insert_meteosource_weather_data():
         print("Error at: " + formatted_ts())
 
 
+@shared_task
+def update_prediction_data_with_meteosource_data():
+    try:
+        places = PointsPlace.objects.all()
+        start_date = datetime.today()
+
+        for day in range(30):
+            current_date = start_date + timedelta(days=day)
+            str_current_date = current_date.strftime("%Y-%m-%d")
+
+            for place in places:
+                meteosource_data = WeatherDataMeteosource.objects.filter(place_id=place.place_id, day=str_current_date)
+                prediction_data = WeatherDataPrediction.objects.filter(station=place.name, c_date=str_current_date)
+                
+                if prediction_data:
+                    for prediction in prediction_data:
+                        if prediction.data_type == 'temperature':
+                            for meteosource in meteosource_data:
+                                prediction.value = meteosource.all_day_temperature
+                                prediction.value_lower = meteosource.all_day_temperature_min
+                                prediction.value_upper = meteosource.all_day_temperature_max
+                                prediction.save()
+                        elif prediction.data_type == 'humidity':
+                            for meteosource in meteosource_data:
+                                prediction.value = meteosource.all_day_humidity
+                                prediction.save()
+                        else:
+                            for meteosource in meteosource_data:
+                                prediction.value = meteosource.all_day_precipitation_total
+                                prediction.save()
+
+            print("current date ===> ", str_current_date)
+
+        write_log_new(log_txt="Meteosource data updated at: " + formatted_ts())
+        print("Meteosource data updated at: " + formatted_ts())
+
+    except Exception as exp:
+        print("Errors is ===> ", str((exp)))
+        write_log_new(log_txt="Errors are : " + str(exp))

@@ -1,5 +1,5 @@
 from audioop import avg
-from datetime import datetime
+from datetime import datetime, timedelta
 from itertools import count
 from django.shortcuts import render
 from django.http import request
@@ -722,31 +722,46 @@ class InsertMeteosourceWeatherData(APIView):
             })
 
 
-class InsertPredictionDataIntoMeteosourceTable(APIView):
+class UpdatePredictionDataWithMeteosourceData(APIView):
     def get(self, request):
         try:
             flag = 0
             places = PointsPlace.objects.all()
+            start_date = datetime.today()
 
-            for place in places:
-                prediction_data = WeatherDataPrediction.objects.filter(c_date='2024-01-23', station=place.name)
-                if prediction_data:
-                    flag += 1
-                    print(place.name)
-                
-                # for pd in prediction_data:
-                    # print("prediction data ===> ", pd.value, pd.data_type)
+            for day in range(30):
+                current_date = start_date + timedelta(days=day)
+                str_current_date = current_date.strftime("%Y-%m-%d")
+
+                for place in places:
+                    meteosource_data = WeatherDataMeteosource.objects.filter(place_id=place.place_id, day=str_current_date)
+                    prediction_data = WeatherDataPrediction.objects.filter(station=place.name, c_date=str_current_date)
+                    
+                    if prediction_data:
+                        for prediction in prediction_data:
+                            if prediction.data_type == 'temperature':
+                                for meteosource in meteosource_data:
+                                    prediction.value = meteosource.all_day_temperature
+                                    prediction.value_lower = meteosource.all_day_temperature_min
+                                    prediction.value_upper = meteosource.all_day_temperature_max
+                                    prediction.save()
+                            elif prediction.data_type == 'humidity':
+                                for meteosource in meteosource_data:
+                                    prediction.value = meteosource.all_day_humidity
+                                    prediction.save()
+                            else:
+                                for meteosource in meteosource_data:
+                                    prediction.value = meteosource.all_day_precipitation_total
+                                    prediction.save()
+
+                print("current date ===> ", str_current_date)
 
             return Response({
                 'status': 200,
-                'message': 'working',
-                'data': flag,
-                'places': places.count()
+                'message': 'weather data updated'
             })
         except Exception as exp:
             return Response({
                 'status': 400,
-                'message': str(exp),
-                'data': 0,
-                'places': 0
+                'message': str(exp)
             })

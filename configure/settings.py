@@ -190,5 +190,9 @@ CELERY_BEAT_SCHEDULE = {
     'insert_meteosource_weather_data': {
         'task': 'temperature_map.tasks.insert_meteosource_weather_data',
         'schedule': crontab(minute=0, hour=2),  # Set the schedule everyday at 2:00 am
-    }
+    },
+    'update_prediction_data_with_meteosource_data': {
+        'task': 'temperature_map.tasks.update_prediction_data_with_meteosource_data',
+        'schedule': crontab(minute=0, hour=3),  # Set the schedule everyday at 3:00 am
+    },
 }
