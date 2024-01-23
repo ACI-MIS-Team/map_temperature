@@ -104,7 +104,18 @@ class MapView(View):
                 for month in result_dict[station][year]:
                     if station not in result:
                         result[station] = []
+                    temperature = result_dict[station][year][month]["temperature"]["avg_value"] if "temperature" in result_dict[station][year][month] else 0
+                    humidity = result_dict[station][year][month]["humidity"]["avg_value"] if "humidity" in result_dict[station][year][month] else 0
+                    weather_condition = 'sunny'
 
+                    if humidity > 70 and temperature < 15:
+                        weather_condition = "rainy"
+                    elif humidity > 70 and temperature >= 15:
+                        weather_condition = "partly_cloudy"
+                    elif humidity <= 70 and temperature < 15:
+                        weather_condition = "cloudy"
+                    elif humidity <= 70 and temperature >= 15:
+                        weather_condition = "sunny"
                     # result[station].append(result_dict[station][year][month])
                     result[station].append(
                         {
@@ -117,10 +128,8 @@ class MapView(View):
                             if "temperature" in result_dict[station][year][month]
                             else 0,
                             "humidity_avg_value": result_dict[station][year][month][
-                                "humidity"
-                            ]["avg_value"]
-                            if "humidity" in result_dict[station][year][month]
-                            else 0,
+                                "humidity"]["avg_value"]if "humidity" in result_dict[station][year][month] else 0,
+                            "weather_condition": weather_condition,
                         }
                     )
 
@@ -276,16 +285,16 @@ class WeatherDataPredictionAverage(APIView):
                     # result[station].append(result_dict[station][year][month])
                     temperature = result_dict[station][year][month]["temperature"]["avg_value"] if "temperature" in result_dict[station][year][month] else 0
                     humidity = result_dict[station][year][month]["humidity"]["avg_value"] if "humidity" in result_dict[station][year][month] else 0
-                    weather_condition = 'Sunny'
+                    weather_condition = 'sunny'
 
                     if humidity > 70 and temperature < 15:
-                        weather_condition = "Rainy"
+                        weather_condition = "rainy"
                     elif humidity > 70 and temperature >= 15:
-                        weather_condition = "Partly Cloudy"
+                        weather_condition = "partly_cloudy"
                     elif humidity <= 70 and temperature < 15:
-                        weather_condition = "Cloudy"
+                        weather_condition = "cloudy"
                     elif humidity <= 70 and temperature >= 15:
-                        weather_condition = "Sunny"
+                        weather_condition = "sunny"
 
                     result[station].append(
                         {

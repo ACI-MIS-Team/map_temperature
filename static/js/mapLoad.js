@@ -2,13 +2,12 @@ var baseurl = "http://maps.codemaven.net";
 //mapbox load
 BANGLA_STYLE = baseurl + "/geocode/banglastyle/";
 ENGLISH_STYLE = baseurl + "/geocode/englsihstyle/";
-mapboxgl.accessToken =
-  "pk.eyJ1IjoidmxhZGltaXJtYWthcm92MTcxIiwiYSI6ImNreTJsdGw0djBhZmwyb24xZ21ianN4Z2wifQ.wNcF-6rCTVkX3oRvBLL4YA";
+mapboxgl.accessToken = "pk.eyJ1IjoidmxhZGltaXJtYWthcm92MTcxIiwiYSI6ImNreTJsdGw0djBhZmwyb24xZ21ianN4Z2wifQ.wNcF-6rCTVkX3oRvBLL4YA";
 var map = new mapboxgl.Map({
   container: "map", // container ID
   style: ENGLISH_STYLE, // style URL
   center: [90.3510153, 23.7645784], // starting position [lng, lat]
-  zoom: 7, // starting zoom
+  zoom: 4, // starting zoom
   attributionControl: false,
 });
 // Define some sample point coordinates with popup content
