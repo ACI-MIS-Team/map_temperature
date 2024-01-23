@@ -30,13 +30,13 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOWED_ORIGINS = ["*"]
+# CORS_ALLOWED_ORIGINS = ["*"]
 
-# CORS_ALLOWED_ORIGINS = [
-#     'http://127.0.0.1:8085',  # Add your frontend development origin
-#     'http://localhost:8085',  # Add your frontend development origin
-#     # Add other origins as needed
-# ]
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:8085',  # Add your frontend development origin
+    'http://localhost:8085',  # Add your frontend development origin
+    # Add other origins as needed
+]
 
 # To allow credentials such as cookies, set this to True
 CORS_ALLOW_CREDENTIALS = True
