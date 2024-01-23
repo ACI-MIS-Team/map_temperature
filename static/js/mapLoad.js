@@ -7,7 +7,7 @@ var map = new mapboxgl.Map({
   container: "map", // container ID
   style: ENGLISH_STYLE, // style URL
   center: [90.3510153, 23.7645784], // starting position [lng, lat]
-  zoom: 4, // starting zoom
+  zoom: 6, // starting zoom
   attributionControl: false,
 });
 // Define some sample point coordinates with popup content

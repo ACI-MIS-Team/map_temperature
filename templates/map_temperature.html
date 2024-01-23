@@ -392,7 +392,7 @@
     <div class="row m-0" style="background-color:#EFF3F4; padding-top: 10px; padding-bottom: 10px;">
         <div class="col-8 tempDiv">
 
-            <div id="tableContainer" class="table-scroll-container" style="max-height:500px; overflow-x: auto;">
+            <div id="tableContainer" class="table-scroll-container" style="max-height:700px; overflow-x: auto;">
                 <table class="table table-bordered custom-table smaller-table">
                     <thead>
                     <tr>
@@ -521,7 +521,7 @@
         let temp = 2.0;
         let total_temp = parseFloat(avg_temp) + temp;
 
-        fetch(`http://0.0.0.0:8085/weather_data_prediction_details/?year=${year}&month=${month}&station=${station}`, {
+        fetch(`http://192.168.100.113:8085/weather_data_prediction_details/?year=${year}&month=${month}&station=${station}`, {
             method: 'GET', // or 'POST' if your API requires it
             headers: {
                 'Content-Type': 'application/json',
