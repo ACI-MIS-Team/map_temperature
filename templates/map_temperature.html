@@ -521,7 +521,7 @@
         let temp = 2.0;
         let total_temp = parseFloat(avg_temp) + temp;
 
-        fetch(`http://localhost:8085/weather_data_prediction_details/?year=${year}&month=${month}&station=${station}`, {
+        fetch(`http://192.168.100.113:8085/weather_data_prediction_details/?year=${year}&month=${month}&station=${station}`, {
             method: 'GET', // or 'POST' if your API requires it
             headers: {
                 'Content-Type': 'application/json',
