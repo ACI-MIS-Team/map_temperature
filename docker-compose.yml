@@ -12,4 +12,34 @@ services:
     command: >
       sh -c "python manage.py makemigrations && python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8085"
+    depends_on:
+      - redis
+      - celery-worker
+      - celery-beat 
 
+  redis:
+    image: redis
+
+  celery-worker:
+    build: .
+    command: celery -A configure worker --loglevel=info
+    depends_on:
+      - redis
+
+  celery-beat:
+    build: .
+    command: celery -A  configure beat --loglevel=info
+    depends_on:
+      - redis
+ 
+  flower:
+    build: .
+    command: celery --broker=redis://redis:6379/0 flower --port=5557
+    ports:
+      - "5557:5557"
+    volumes:
+      - flower-data:/flower-data
+    depends_on:
+      - redis
+volumes:
+  flower-data:
