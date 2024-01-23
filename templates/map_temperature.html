@@ -36,7 +36,6 @@
             bottom: 0;
             width: 100% !important;
         }
-
         .custom-table td {
             width: 50px; /* Adjust the width as needed */
             vertical-align: middle !important;
@@ -214,13 +213,12 @@
         }
         .fa-solid, .fas{
             color: white;
-            background-color: red;
             margin-left: 4px;
             padding: 2px;
             border-radius: 50px;
+            width: 25px;
+            height: 25px;
 
-            width: 20px;
-            height: 20px;
         }
 
         input {
@@ -320,19 +318,19 @@
     <div class="topbar row m-0">
         <div class="col-5">
             <br>
-            <h2 class="top_temperature">29 °C</h2>
+            <h2 class="top_temperature">18 °C</h2>
             <h2 class="top_sub_title">Today, Dhaka</h2>
         </div>
         <div class="col-6">
             <div class="row">
                 <div class="weather-division" align="center">
                     <img src="{% static 'img/sunny.svg' %}" height="40px" width="40px">
-                    <h6>25 °C</h6>
+                    <h6>20 °C</h6>
                     <p>Barisal</p>
                 </div>
                 <div class="weather-division" align="center">
                     <img src="{% static 'img/sunny.svg' %}" height="40px" width="40px">
-                    <h6>21 °C</h6>
+                    <h6>19 °C</h6>
                     <p>Chittagong</p>
                 </div>
                 <div class="weather-division" align="center">
@@ -410,7 +408,7 @@
                         <td class="cell"
                             onclick="generateCalendar('{{ data.year}}', '{{ data.month }}', '{{ data.station }}', '{{ data.temperature_avg_value}}');  toggleBackgroundColor(this); openModal('dateWisePredictionModal')">
                             <img class="cell-image" src="{% static 'img/' %}{{ data.weather_condition }}.svg" height="40px" width="40px" style="padding: 7px">
-                            <div class="cell-group cell-group1">{{ data.temperature_avg_value | floatformat:1 }}</div>
+                            <div class="cell-group cell-group1">{{ data.temperature_avg_value | floatformat:1 }} °C</div>
                             <div class="cell-group cell-group2">{{ data.humidity_avg_value | floatformat:1 }}</div>
                         </td>
                         {% endfor %}
@@ -521,7 +519,7 @@
         let temp = 2.0;
         let total_temp = parseFloat(avg_temp) + temp;
 
-        fetch(`http://192.168.100.113:8085/weather_data_prediction_details/?year=${year}&month=${month}&station=${station}`, {
+        fetch(`http://0.0.0.0:8085/weather_data_prediction_details/?year=${year}&month=${month}&station=${station}`, {
             method: 'GET', // or 'POST' if your API requires it
             headers: {
                 'Content-Type': 'application/json',
@@ -570,7 +568,7 @@
 
                                 const wheatIcon = document.createElement('img');
                                 wheatIcon.src = '{% static "img/maize.png" %}'; // Replace with the actual path to your wheat image
-                                wheatIcon.title = 'Below 4°C could cause damage.'; // Add hover text for wheat icon
+                                wheatIcon.title = 'Sprouting the seeds to grand growth: 25°C to 35°C, Maturity to harvesting stage: 12°C to 14°C, below 12°C can reduce yield.'; // Add hover text for wheat icon
 
                                 const riceIcon = document.createElement('img');
                                 riceIcon.src = '{% static "img/rice.png" %}'; // Replace with the actual path to your rice image
@@ -584,11 +582,16 @@
 
                                 if(dayData.warning.rice==false){
                                     container.appendChild(riceIcon);
+                                    cell.style.backgroundColor = 'red';
+                                    cell.style.color = 'white';
                                 }
                                 if(dayData.warning.maze==false){
                                     container.appendChild(wheatIcon);
+                                    cell.style.backgroundColor = 'red';
+                                    cell.style.color = 'white';
                                 }
                                 // Append the rainy icon on the right
+
 
 
                                 // Set the container to have a display style of flex
