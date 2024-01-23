@@ -13,6 +13,10 @@
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
 
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css" rel="stylesheet"/>
+    <script>
+        const thermometerImageUrl = "{% static 'img/thermometer.svg' %}";
+        const highTemperatureImageUrl = "{% static 'img/high-temperature.svg' %}";
+    </script>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mapbox-gl-animated-popup@v0.2.1/dist/mapbox-gl-animated-popup.min.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
@@ -26,12 +30,23 @@
             padding: 0;
         }
 
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100% !important;
+        }
+
         .custom-table td {
             width: 50px; /* Adjust the width as needed */
             vertical-align: middle !important;
         }
-        .custom-table .cell{
+
+        .custom-table .cell {
             background-color: #093D6D;
+            vertical-align: middle !important;
+            align-content: center;
+
         }
 
         .table td.total-cell {
@@ -45,29 +60,34 @@
 
         .table {
             width: 100%; /* Set the width to 100% of the container */
-            table-layout: auto !important ;
+            table-layout: auto !important;
         }
 
         /* Style for the smaller table */
         .smaller-table {
             font-size: 11px; /* Adjust the font size as needed */
         }
-        .smaller-table th{
+
+        .smaller-table th {
             padding: 0;
         }
+
         .smaller-table td {
             padding: 0 !important; /* Adjust the padding as needed */
         }
-        .cell-group{
+
+        .cell-group {
             justify-content: space-between; /* Separate the values within the cell */
-            align-content: center;
+            align-content: center !important;
             padding: 10px;
-            background-color: red;
+            background-color: #093D6D;
         }
-        .cell-group1{
+
+        .cell-group1 {
             background-color: #E0E0E0;
         }
-        .cell-group2{
+
+        .cell-group2 {
             background-color: #cbcbcb;
         }
 
@@ -76,7 +96,7 @@
         }
 
         .total-cell .value1, .total-cell .value2 {
-            color: red;
+            color: #093D6D;
         }
 
         .calendar {
@@ -86,7 +106,7 @@
         }
 
         .calendar th {
-            background-color: #cd0000;
+            background-color: #093D6D;
             color: #fff;
             font-weight: bold;
         }
@@ -94,6 +114,11 @@
         .cell {
             padding: 5px;
             cursor: pointer;
+            text-align: center !important;
+        }
+
+        td, th {
+            text-align: center !important;
         }
 
         .selected {
@@ -127,21 +152,36 @@
             color: orange;
         }
 
+        .weather-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px; /* Adjust margin as needed */
+        }
+
+        .temperature,
+        .humidity {
+            margin-right: 5px; /* Adjust margin between text and icon */
+        }
+
         .temperature {
             font-size: 14px;
             color: black;
             font-weight: normal;
         }
-        .top_sub_title{
+
+        .top_sub_title {
             color: #fff;
-            font-size: 26px;
-            font-weight: normal;
+            font-size: 22px;
+            align-content: baseline;
         }
-        .top_temperature{
+
+        .top_temperature {
             font-weight: bold;
             color: #fff;
             font-size: 30px;
         }
+
         .humidity {
             font-size: 14px;
             color: black;
@@ -159,13 +199,28 @@
         .date {
             font-weight: bold;
         }
-        .weather-division{
+
+        .weather-division {
             padding: 8px;
             width: 80px;
             border-radius: 5px;
             background-color: rgba(0, 0, 0, 0.5);
             color: #fff;
             margin-right: 10px;
+        }
+
+        .weather-division p {
+            font-size: 11px;
+        }
+        .fa-solid, .fas{
+            color: white;
+            background-color: red;
+            margin-left: 4px;
+            padding: 2px;
+            border-radius: 50px;
+
+            width: 20px;
+            height: 20px;
         }
 
         input {
@@ -176,7 +231,8 @@
             width: 320px;
             box-sizing: border-box; /* Include padding and border in the element's total width and height */
         }
-        .tempDiv{
+
+        .tempDiv {
             background-color: white;
             border-radius: 10px;
             box-shadow: 5px 10px 8px #dddddd;
@@ -195,12 +251,15 @@
             margin-top: 4px;
             font-size: 12px;
         }
-        .topbar{
-            align-content:center;
+
+        .topbar {
+            align-content: center;
             height: 130px;
-            background-image: url('{% static 'img/background.svg' %}');
-            padding:  0 20px;
+            background-image: url('{% static 'img/background.png' %}');
+            background-size: cover;
+            padding: 0 20px;
         }
+
         .modal {
             display: none;
             position: fixed;
@@ -251,7 +310,7 @@
     <!-- Mapbox -->
     <link href="https://api.mapbox.com/mapbox-assembly/mbx/v0.18.0/assembly.min.css" rel="stylesheet"/>
 
-    <link rel="stylesheet" href="{% static 'css\style.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
@@ -259,33 +318,61 @@
 <body>
 <div class="container-fluid p-0">
     <div class="topbar row m-0">
-        <div class="col-2">
+        <div class="col-5">
+            <br>
             <h2 class="top_temperature">29 °C</h2>
             <h2 class="top_sub_title">Today, Dhaka</h2>
         </div>
-        <div class="col-8">
+        <div class="col-6">
             <div class="row">
                 <div class="weather-division" align="center">
-                    <img src="{% static 'img/sunny.svg' %}" height="20px">
-                    <h6>Barisal</h6>
-                    <h6>29 °C</h6>
+                    <img src="{% static 'img/sunny.svg' %}" height="40px" width="40px">
+                    <h6>25 °C</h6>
+                    <p>Barisal</p>
                 </div>
                 <div class="weather-division" align="center">
-                    <img src="{% static 'img/sunny.svg' %}" height="20px">
-                    <h6>Barisal</h6>
-                    <h6>29 °C</h6>
+                    <img src="{% static 'img/sunny.svg' %}" height="40px" width="40px">
+                    <h6>21 °C</h6>
+                    <p>Chittagong</p>
+                </div>
+                <div class="weather-division" align="center">
+                    <img src="{% static 'img/partly_cloudy.svg' %}" height="40px" width="40px">
+                    <h6>18 °C</h6>
+                    <p>Khulna</p>
+                </div>
+                <div class="weather-division" align="center">
+                    <img src="{% static 'img/partly_cloudy.svg' %}" height="40px" width="40px">
+                    <h6>16 °C</h6>
+                    <p>Mymensingh</p>
+                </div>
+                <div class="weather-division" align="center">
+                    <img src="{% static 'img/cloudy.svg' %}" height="40px" width="40px">
+                    <h6>10 °C</h6>
+                    <p>Rajshahi</p>
+                </div>
+                <div class="weather-division" align="center">
+                    <img src="{% static 'img/rainy.svg' %}" height="40px" width="40px">
+                    <h6>8 °C</h6>
+                    <p>Rangpur</p>
+                </div>
+                <div class="weather-division" align="center">
+                    <img src="{% static 'img/cloudy.svg' %}" height="40px" width="40px">
+                    <h6>20 °C</h6>
+                    <p>Sylhet</p>
                 </div>
             </div>
         </div>
-        <div class="col-2">
+        <div class="col-1">
+            <br>
             <h2 class="top_sub_title" align="right">Time</h2>
-            <h2 class="top_sub_title" align="right">2:58 PM</h2>
+            <h2 id="current-time" class="top_sub_title" align="right"></h2>
         </div>
     </div>
     <div class="row m-0" style="height: 81px; padding-top: 10px; padding-bottom: 10px">
         <div class="col-10 bg-white">
             <form action="/search" method="GET">
-                <label for="searchBox" style="font-size: 15px; font-weight: bold; margin-right: 10px">64 Stations</label>
+                <label for="searchBox" style="font-size: 15px; font-weight: bold; margin-right: 10px">64
+                    Stations</label>
                 <input type="text" id="searchBox" name="query" placeholder="Type station name">
             </form>
         </div>
@@ -303,37 +390,38 @@
         </div>
     </div>
     <div class="row m-0" style="background-color:#EFF3F4; padding-top: 10px; padding-bottom: 10px;">
-        <div class="col-7 tempDiv">
+        <div class="col-8 tempDiv">
+
             <div id="tableContainer" class="table-scroll-container" style="max-height:500px; overflow-x: auto;">
                 <table class="table table-bordered custom-table smaller-table">
-                        <thead>
-                        <tr>
-                            <th>Station</th>
-                            {% for month in months %}
-                            <th style="background-color: #002F5B; color: white">{{month}}</th>
-                            {% endfor %}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for station, station_data in results.items %}
-                        <tr>
-                            <td>{{ station }}</td>
-                            {% for data in station_data %}
-                            <td class="cell"  onclick="generateCalendar('{{ data.year}}', '{{ data.month }}', '{{ data.station }}', '{{ data.temperature_avg_value}}');  toggleBackgroundColor(this); openModal('dateWisePredictionModal')">
-<!--                            <td class="cell" onclick="">-->
-                                <img class="cell-image" src="{% static 'img/sunny.svg' %}" height="40px" style="padding: 7px">
-                                <div class="cell-group cell-group1">{{ data.temperature_avg_value | floatformat:1 }}</div>
-                                <div class="cell-group cell-group2">{{ data.humidity_avg_value | floatformat:1 }}</div>
-                            </td>
-                            {% endfor %}
-                        </tr>
+                    <thead>
+                    <tr>
+                        <th>Station</th>
+                        {% for month in months %}
+                        <th style="background-color: #002F5B; color: white">{{month}}</th>
                         {% endfor %}
-                        </tbody>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for station, station_data in results.items %}
+                    <tr>
+                        <td>{{ station }}</td>
+                        {% for data in station_data %}
+                        <td class="cell"
+                            onclick="generateCalendar('{{ data.year}}', '{{ data.month }}', '{{ data.station }}', '{{ data.temperature_avg_value}}');  toggleBackgroundColor(this); openModal('dateWisePredictionModal')">
+                            <img class="cell-image" src="{% static 'img/' %}{{ data.weather_condition }}.svg" height="40px" width="40px" style="padding: 7px">
+                            <div class="cell-group cell-group1">{{ data.temperature_avg_value | floatformat:1 }}</div>
+                            <div class="cell-group cell-group2">{{ data.humidity_avg_value | floatformat:1 }}</div>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                    </tbody>
 
-                    </table>
+                </table>
             </div>
         </div>
-        <div class="col-5" style="max-height: 500px">
+        <div class="col-4">
             <div id="map"></div>
         </div>
     </div>
@@ -341,7 +429,9 @@
     <div class="modal" id="dateWisePredictionModal">
         <div class="modal-content container">
 
-            <div align="right"><button onclick="closeModal('dateWisePredictionModal')" style="font-weight: bold">X</button></div>
+            <div align="right">
+                <button onclick="closeModal('dateWisePredictionModal')" style="font-weight: bold">X</button>
+            </div>
             <br>
             <center><h5>Date Wise Prediction</h5></center>
             <br>
@@ -349,18 +439,18 @@
                 <div class="row">
                     <table class="calendar col-11">
                         <thead>
-                            <tr>
-                                <th>Sun</th>
-                                <th>Mon</th>
-                                <th>Tue</th>
-                                <th>Wed</th>
-                                <th>Thu</th>
-                                <th>Fri</th>
-                                <th>Sat</th>
-                            </tr>
+                        <tr>
+                            <th>Sun</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                        </tr>
                         </thead>
                         <tbody id="calendar-body">
-                            <!-- Add your calendar content here -->
+                        <!-- Add your calendar content here -->
                         </tbody>
                     </table>
                 </div>
@@ -371,6 +461,26 @@
 
 </div>
 <script>
+    // Function to update the current time
+    function updateCurrentTime() {
+        // Get the current date and time
+        const now = new Date();
+
+        // Format the time as HH:MM:SS
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+
+        // Display the formatted time
+        const currentTimeElement = document.getElementById('current-time');
+        currentTimeElement.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+    // Update the current time every second
+    setInterval(updateCurrentTime, 1000);
+
+    // Initial update
+    updateCurrentTime();
     function toggleBackgroundColor(cell) {
         const cells = document.querySelectorAll('.cell');
         cells.forEach((otherCell) => {
@@ -389,20 +499,21 @@
         var modal = document.getElementById(modalId);
         modal.style.display = "none";
     }
+
     // Get today's date
     const today = new Date();
     let currentMonth = today.getMonth() + 1;
     let currentYear = today.getFullYear();
-    console.log(today.getMonth());
-    console.log(currentMonth);
+
     const weatherIcons = {
-        sunny: 'fas fa-sun',  // Replace with the appropriate sunny icon
-        rainy: 'fas fa-cloud-showers-heavy',  // Use a rainy icon
-        // Add more weather conditions and icons as needed
+        sunny: 'fas fa-sun',
+        rainy: 'fas fa-cloud-showers-heavy',
+        rice: 'fas fa-utensils', // Use the utensils icon for rice
+        wheat: 'fas fa-sun', // Use the utensils icon for wheat (you can replace it if you find a more suitable one)
     };
 
 
-    generateCalendar(2023, 11, "Dhaka")
+    generateCalendar(2024, 1, "Dhaka")
 
     // Function to generate the calendar for a given month and year
     function generateCalendar(year, month, station, avg_temp) {
@@ -410,7 +521,7 @@
         let temp = 2.0;
         let total_temp = parseFloat(avg_temp) + temp;
 
-        fetch(`http://192.168.100.113:8085/weather_data_prediction_details/?year=${year}&month=${month}&station=${station}`, {
+        fetch(`http://0.0.0.0:8085/weather_data_prediction_details/?year=${year}&month=${month}&station=${station}`, {
             method: 'GET', // or 'POST' if your API requires it
             headers: {
                 'Content-Type': 'application/json',
@@ -456,44 +567,46 @@
                                 // Display the date
                                 const dateElement = document.createElement('span');
                                 dateElement.innerText = day;
-                                let rainyIcon = document.createElement('i');
-                                let sunnyIcon = document.createElement('i');
-                                if (dayData.rainy === true) {
-                                    console.log("paise")
-                                    rainyIcon.className = weatherIcons.rainy;
-                                }
-                                if (dayData.temperature >= total_temp) {
-                                    sunnyIcon.className = weatherIcons.sunny;
-                                }
-                                // Create a space element (e.g., a span with margin) to separate the date and the icon
-                                const space = document.createElement('span');
-                                space.style.margin = '0 5px'; // Adjust the margin as needed for the desired gap
+
+                                const wheatIcon = document.createElement('img');
+                                wheatIcon.src = '{% static "img/maize.png" %}'; // Replace with the actual path to your wheat image
+                                wheatIcon.title = 'Below 4°C could cause damage.'; // Add hover text for wheat icon
+
+                                const riceIcon = document.createElement('img');
+                                riceIcon.src = '{% static "img/rice.png" %}'; // Replace with the actual path to your rice image
+                                riceIcon.title = 'Below 10°C (50°F) during flowering stage could cause damage. Above 35°C during reproductive stage reduces rice production.'; // Add hover text for rice icon
+
+                                // Append the icons to the document or a specific container
+                                document.body.appendChild(riceIcon);
+                                document.body.appendChild(wheatIcon);
+
+                                wheatIcon.className = weatherIcons.wheat;
+                                riceIcon.className = weatherIcons.rice;
 
                                 // Append the date element on the left
                                 container.appendChild(dateElement);
 
-                                // Append the space in the middle
-                                container.appendChild(space);
-
+                                if(dayData.warning.rice==false){
+                                    container.appendChild(riceIcon);
+                                }
+                                if(dayData.warning.maze==false){
+                                    container.appendChild(wheatIcon);
+                                }
                                 // Append the rainy icon on the right
-                                container.appendChild(sunnyIcon);
-                                container.appendChild(rainyIcon);
+
 
                                 // Set the container to have a display style of flex
                                 container.style.display = 'flex';
 
                                 // Align date and rainy icon at the extremes of the container
                                 dateElement.style.marginRight = 'auto';
-                                rainyIcon.style.marginLeft = 'auto';
-
+                                riceIcon.style.marginLeft = 'auto';
 
                                 // Display the date, space, and the rainy icon
                                 cell.appendChild(container);
 
-                                // Display the temperature and humidity information as before
-                                cell.innerHTML += `<br><i class="fas fa-thermometer-half"></i> <span class="temperature">${dayData.temperature} °C</span>`;
-                                cell.innerHTML += `<br><i class="fas fa-tint"></i> <span class="humidity">${dayData.humidity}</span>`;
-
+                                cell.innerHTML += `<div class="weather-info"><span class="temperature">${dayData.temperature} °C</span><img src="${thermometerImageUrl}" height="20px"></div>`;
+                                cell.innerHTML += `<div class="weather-info"><span class="humidity">${dayData.humidity}</span><img src="${highTemperatureImageUrl}" height="20px"></div>`;
 
                             }
 
@@ -553,6 +666,7 @@
 
     // Initial calendar display update
     updateCalendarDisplay();
+
 </script>
 
 <script>
