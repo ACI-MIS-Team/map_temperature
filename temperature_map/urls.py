@@ -39,5 +39,10 @@ urlpatterns = [
         "insert_meteosource_weather_data/",
         views.InsertMeteosourceWeatherData.as_view(),
         name="insert-meteosource-weather-data",
-    ),   
+    ),
+        path(
+        "insert_prediction_data_into_meteosource_table/",
+        views.InsertPredictionDataIntoMeteosourceTable.as_view(),
+        name="insert-prediction-data-into-meteosource-table",
+    ),
 ]

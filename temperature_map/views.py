@@ -1,5 +1,6 @@
 from audioop import avg
 from datetime import datetime
+from itertools import count
 from django.shortcuts import render
 from django.http import request
 from django.db.models import Avg
@@ -718,4 +719,34 @@ class InsertMeteosourceWeatherData(APIView):
                 'status': 400,
                 'message': str(exp),
                 'data': {}
+            })
+
+
+class InsertPredictionDataIntoMeteosourceTable(APIView):
+    def get(self, request):
+        try:
+            flag = 0
+            places = PointsPlace.objects.all()
+
+            for place in places:
+                prediction_data = WeatherDataPrediction.objects.filter(c_date='2024-01-23', station=place.name)
+                if prediction_data:
+                    flag += 1
+                    print(place.name)
+                
+                # for pd in prediction_data:
+                    # print("prediction data ===> ", pd.value, pd.data_type)
+
+            return Response({
+                'status': 200,
+                'message': 'working',
+                'data': flag,
+                'places': places.count()
+            })
+        except Exception as exp:
+            return Response({
+                'status': 400,
+                'message': str(exp),
+                'data': 0,
+                'places': 0
             })
