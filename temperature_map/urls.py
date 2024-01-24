@@ -45,4 +45,9 @@ urlpatterns = [
         views.UpdatePredictionDataWithMeteosourceData.as_view(),
         name="update-prediction-data-with-meteosource-data",
     ),
+        path(
+        "update_prediction_data/",
+        views.UpdatePredictionData.as_view(),
+        name="update-prediction-data",
+    ),
 ]

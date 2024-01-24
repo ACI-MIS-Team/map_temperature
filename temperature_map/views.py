@@ -765,3 +765,21 @@ class UpdatePredictionDataWithMeteosourceData(APIView):
                 'status': 400,
                 'message': str(exp)
             })
+
+
+class UpdatePredictionData(APIView):
+    def get(self, request):
+        try:
+            places = PointsPlace.objects.filter(lat=22.7, lon=89.81)
+            for place in places:
+                print(place.name)
+            
+            return Response({
+                'status': 200,
+                'message': 'working'
+            })
+        except Exception as exp:
+            return Response({
+                'status': 400,
+                'message': str(exp)
+            })
